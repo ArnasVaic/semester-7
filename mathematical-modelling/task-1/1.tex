@@ -1,0 +1,73 @@
+\documentclass[11pt]{article}
+
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage[T1]{fontenc}
+\usepackage[lithuanian]{babel}
+
+% Margins
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\title{ Pirmas laboratorinis darbas}
+\author{ Arnas Vaicekauskas }
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Pirmas pratimas}
+
+\setlength{\jot}{10px}
+
+$$
+2+y^2+\sqrt{5-x^2}yy'=0
+$$
+
+Kintamieji atsiskiria atlikus porą elementarių pertvarkymų:
+
+\begin{equation}
+\begin{split}
+\sqrt{5-x^2}y\frac{dy}{dx}&=-(y^2+2) \\
+\frac{ydy}{-(y^2+2)}&=\frac{dx}{\sqrt{5-x^2}}
+\end{split}
+\end{equation}
+
+Integruojame:
+\begin{equation}
+    \begin{split}
+        \int\frac{ydy}{-(y^2+2)}&=\int\frac{dx}{\sqrt{5-x^2}} \\
+        -\frac{1}{2}\int\frac{d(y^2+2)}{y^2+2}&=\arcsin{\frac{x}{\sqrt{5}}}+C\\
+        -\frac{1}{2}\ln|y^2+2|&=\arcsin{\frac{x}{\sqrt{5}}}+C\\
+        \ln|y^2+2|&=C-2\arcsin{\frac{x}{\sqrt{5}}}\\
+        y^2&=Ce^{-2\arcsin{\frac{x}{\sqrt{5}}}} - 2
+    \end{split}
+\end{equation}
+
+Prieš tikrindami randame išvestinę "patogesnėje" išraiškoje:
+
+\begin{equation}
+    \begin{split}
+        (y^2)'&=(Ce^{-2\arcsin{\frac{x}{\sqrt{5}}}} - 2)' \\
+        2yy'&=\frac{-2C}{\sqrt{5-x^2}}e^{-2\arcsin{\frac{x}{\sqrt{5}}}}\\
+        yy'&=\frac{-C}{\sqrt{5-x^2}}e^{-2\arcsin{\frac{x}{\sqrt{5}}}}
+    \end{split}
+\end{equation}
+\newpage
+Tikriname:
+
+\begin{equation}
+    \begin{split}
+        2+y^2+\sqrt{5-x^2}yy'=0\\
+        2+Ce^{-2\arcsin{\frac{x}{\sqrt{5}}}} - 2+\sqrt{5-x^2}\frac{-C}{\sqrt{5-x^2}}e^{-2\arcsin{\frac{x}{\sqrt{5}}}}=0\\
+        2-2+Ce^{-2\arcsin{\frac{x}{\sqrt{5}}}}-Ce^{-2\arcsin{\frac{x}{\sqrt{5}}}}=0\\
+        0\equiv0
+    \end{split}
+\end{equation}
+
+\end{document}
