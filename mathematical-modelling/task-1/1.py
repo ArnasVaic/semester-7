@@ -38,7 +38,6 @@ plt.ylim(-8, 8)
 
 threshold = 0.01
 
-plt.title("Integralinės kreivės ir palyginimas su skaitiniu metodu.")
 plt.xlabel("x")
 plt.ylabel("y")
 
@@ -58,3 +57,5 @@ for c, color in zip(cs, colors):
     ys1_lower, ys1_upper = analytical_solution(xs, c)
     plt.plot(xs, ys1_lower, color=color)
     plt.plot(xs, ys1_upper, color=color)
+
+# %%

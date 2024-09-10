@@ -30,23 +30,24 @@ def find_points_to_render(ys, threshold):
 cs = [ 0.5, 1, 1.5, 2 ]
 colors = [ 'cyan', 'magenta', 'blue', 'red' ]
 
-x_start, x_end, steps = 0.0, 10, 1000
-xs = np.linspace(x_start, x_end, steps)
+offsets = [ 2.1, 1.1, 0.7, 0.56 ]
 
 plt.xlim(0, 10)
 plt.ylim(-8, 8)
 
 threshold = 0.01
 
-plt.title("Integralinės kreivės ir palyginimas su skaitiniu metodu.")
 plt.xlabel("x")
 plt.ylabel("y")
 
-for c, color in zip(cs, colors):
+for c, color, offset in zip(cs, colors, offsets):
     
     # before plotting make sure we don't include if
     # derivative starts to go haywire (in this case where y = 0)
-    y0 = np.sqrt(y2(xs[0] + 1, c))
+    x_start, x_end, steps = offset, 10, 1000
+    xs = np.linspace(x_start, x_end, steps)
+
+    y0 = np.sqrt(y2(xs[0], c))
     ys2_lower, ys2_upper = sc.odeint(model, -y0, xs), sc.odeint(model, y0, xs)
     N, M = find_points_to_render(ys2_lower, threshold), find_points_to_render(ys2_upper, threshold)
 
@@ -55,6 +56,8 @@ for c, color in zip(cs, colors):
     plt.scatter(xs[:M:40], ys2_upper[:M:40], color=color)
 
     # plot analytical solution branches
+    x_start, x_end, steps = 0, 10, 1000
+    xs = np.linspace(x_start, x_end, steps)
     ys1_lower, ys1_upper = analytical_solution(xs, c)
     plt.plot(xs, ys1_lower, color=color)
     plt.plot(xs, ys1_upper, color=color)

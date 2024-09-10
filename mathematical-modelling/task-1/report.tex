@@ -86,7 +86,7 @@ Praretinti taškai žymi sprendį, kuris buvo apskaičiuotas skaitiniu metodu su
     \centering
     \includegraphics[width=0.5\textwidth]{1.png}
     \caption{Integralinės kreivės $C$ reikšmėm $0.5, 1, 2, 4$}
-    \label{fig:sample}
+    \label{fig:pvz1}
 \end{figure}
 
 \newpage
@@ -150,12 +150,19 @@ Tikrinimą atliksime taip pat su "patogesne" lygties forma, padauginę abi puses
 
 \subsection{Palyginimas}
 
-Analitinio sprendinio palyginimas su sprendiniu gautu skaitiniais metodais:
+Palyginimas analogiškas pirmam pratimui su šiek tiek skirtingom $C$ reikšmėm.
 
-TODO
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.5\textwidth]{2.png}
+    \caption{Integralinės kreivės $C$ reikšmėm $0.5, 1, 1.5, 2$}
+    \label{fig:pvz2}
+\end{figure}
 
 \newpage
 \section{Trečias pratimas}
+
+\subsection{Sprendimas}
 
 \begin{equation}
 \begin{cases}
@@ -216,7 +223,9 @@ y=C(x)e^{-2x}=\frac{x}{2}-\frac{1}{4}+\widetilde{C}e^{-2x}\\
 \end{split}
 \end{equation}
 
-ir tada
+\subsection{Tikrinimas}
+
+Išvestinė:
 
 \begin{equation}
 \begin{split}
@@ -246,8 +255,16 @@ y(x)=\frac{x}{2}-\frac{1}{4}+\frac{5}{4}e^{-2x}
 \end{split}
 \end{equation}
 
-Analitinio sprendinio palyginimas su sprendiniu gautu skaitiniais metodais:
+\newpage
+\subsection{Palyginimas}
 
+Raudona linija vaizduoja analitinį sprendinį. Melyni taškai vaizduoja sprendinį gautą naudojant skaitinius metodus. Žalias taškas žymi pradinę sąlygą $y(0)=1$.
 
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.5\textwidth]{3.png}
+    \caption{Koši sprendinys}
+    \label{fig:pvz3}
+\end{figure}
 
 \end{document}
