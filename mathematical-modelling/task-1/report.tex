@@ -23,6 +23,8 @@
 
 \section{Pirmas pratimas}
 
+\subsection{Sprendimas}
+
 \setlength{\jot}{10px}
 
 $$
@@ -49,6 +51,10 @@ Integruojame:
     \end{split}
 \end{equation}
 
+
+\newpage
+\subsection{Tikrinimas}
+
 Prieš tikrindami randame išvestinę "patogesnėje" išraiškoje:
 
 \begin{equation}
@@ -58,8 +64,8 @@ Prieš tikrindami randame išvestinę "patogesnėje" išraiškoje:
         yy'&=\frac{-C}{\sqrt{5-x^2}}e^{-2\arcsin{\frac{x}{\sqrt{5}}}}
     \end{split}
 \end{equation}
-\newpage
-Tikriname:
+
+tada
 
 \begin{equation}
     \begin{split}
@@ -70,11 +76,23 @@ Tikriname:
     \end{split}
 \end{equation}
 
-Analitinio sprendinio palyginimas su sprendiniu gautu skaitiniais metodais:
+\subsection{Palyginimas}
 
-TODO
+Skitingos spalvos naudojamos vaizduoti sprendinius su skirtingomis $C$ reikšmėmis.
+Vientisos linijos vaizduoja sprendinį gautą analitiniu metodu, kuris aprašytas šiame dokumente.
+Praretinti taškai žymi sprendį, kuris buvo apskaičiuotas skaitiniu metodu su automatiniu sprendėju.
 
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.5\textwidth]{1.png}
+    \caption{Integralinės kreivės $C$ reikšmėm $0.5, 1, 2, 4$}
+    \label{fig:sample}
+\end{figure}
+
+\newpage
 \section{Antras pratimas}
+
+\subsection{Sprendimas}
 
 \begin{equation}
     3x^3y'=y(3x^2-y^2)
@@ -100,7 +118,6 @@ u^{-2}=\frac{2}{3}\ln|Cx|
 \end{split}
 \end{equation}
 
-\newpage
 Gražinam keitinį:
 
 \begin{equation}
@@ -109,6 +126,8 @@ Gražinam keitinį:
 y^2=\frac{3x^2}{2\ln|Cx|}
 \end{split}
 \end{equation}
+
+\subsection{Tikrinimas}
 
 Prieš tikrindami randame išvestinę "patogesnėje" išraiškoje:
 
@@ -128,6 +147,8 @@ Tikrinimą atliksime taip pat su "patogesne" lygties forma, padauginę abi puses
 \frac{18x^4\ln|x|-9x^4}{4\ln^2|Cx|}\equiv\frac{18x^4\ln|x|-9x^4}{4\ln^2|Cx|}
 \end{split}
 \end{equation}
+
+\subsection{Palyginimas}
 
 Analitinio sprendinio palyginimas su sprendiniu gautu skaitiniais metodais:
 
@@ -227,6 +248,6 @@ y(x)=\frac{x}{2}-\frac{1}{4}+\frac{5}{4}e^{-2x}
 
 Analitinio sprendinio palyginimas su sprendiniu gautu skaitiniais metodais:
 
-TODO
+
 
 \end{document}
