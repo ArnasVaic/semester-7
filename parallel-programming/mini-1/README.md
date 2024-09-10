@@ -30,7 +30,7 @@ $$
 \beta=\frac{t_{sort}}{t_{gen}+t_{sort}}=\frac{nM^2}{rNM+NM^2}=\frac{NM}{rN+NM}\approx 0.993
 $$
 
-with two times bigger $M$, the results would still be:
+with two times bigger $M$, the results would be:
 
 $$
 \alpha\approx 0.003\\
