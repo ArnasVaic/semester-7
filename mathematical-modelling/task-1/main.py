@@ -58,5 +58,3 @@ for c, color in zip(cs, colors):
     ys1_lower, ys1_upper = analytical_solution(xs, c)
     plt.plot(xs, ys1_lower, color=color)
     plt.plot(xs, ys1_upper, color=color)
-
-# %%
