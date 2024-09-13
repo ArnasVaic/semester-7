@@ -1,75 +1,105 @@
 const canvas = $("#canvas")[0]
 const ctx = canvas.getContext("2d")
-
 const canvas_center = [canvas.width, canvas.height].map((x) => x / 2)
 
-const gear_count = 2
-const gear_sizes = [0,0]
-const gear_radii = gear_sizes.map(x => x / 2)
-const gear_placement_angles_deg = [0, 0]
+const clockScale = 1/4
+const clockOutlinePng = new Image()
+clockOutlinePng.src = "assets/clock.png" 
 
-const large_gear_svg = new Image()
-large_gear_svg.src = "assets/large-gear-debug.svg"
-const large_scale = 4
-const large_r = large_gear_svg.width * large_scale / 2
-let large_angle = 0
+const secondHandlePhase = Math.PI + 2 * Math.PI * (1 + (new Date).getSeconds()) / 60
+const minuteHandlePhase = Math.PI + 2 * Math.PI * (1 + (new Date).getMinutes()) / 60
 
-const small_gear_svg = new Image()
-small_gear_svg.src = "assets/small-gear-debug.svg"
-const small_scale = 1.25 // 1.2 for real gears, 1.25 for debug gears
-const small_r = small_gear_svg.width * small_scale / 2
-let small_angle = 0//.46
+function nextGearPosition(
+  previousGearPosition,
+  previousGearRadius,
+  currentGearRadius,
+  angle)
+{
+  let distance = previousGearRadius + currentGearRadius - 2 * PitchMinusInnerRadius
+  let direction = [ Math.cos(angle), Math.sin(angle) ]
+  return [
+    previousGearPosition[0] + distance * direction[0],
+    previousGearPosition[1] + distance * direction[1]
+  ]
+}
 
-const magic_ratio_constant = 1.17155 // 1.17155 for debug gears, 
+const gearSvgs = [8, 10, 60, 80].map(size => {
+  let image = new Image()
+  //image.src = `assets/involute_gear_80_to_${size}.svg`
+  image.src = `assets/${size}-teeth-gear.svg`
+  return image
+})
+// Unique values for different gear sizes
+const gearScales = [0.475, 0.6, 3, 4] // By eye
+const gearScaledRadii = gearSvgs.map((svg, i) => gearScales[i] * svg.width/2)
+
+// Configurations for the entire scene
+const PitchMinusInnerRadius = 7
+// Ids into unique value arrays for each gear property
+const sceneGearConfiguration = [ 2, 1, 3, 0 ] 
+const sceneGearAngles = [0, 0, 0, 0]
+
+function calculateGearPositions()
+{
+  let p1 = [ canvas_center[0] - 300, canvas_center[1] ]
+  let p2 = nextGearPosition(p1, gearScaledRadii[sceneGearConfiguration[0]], gearScaledRadii[sceneGearConfiguration[1]], 0)
+  let p3 = p2 // same position
+  let p4 = nextGearPosition(p3, gearScaledRadii[sceneGearConfiguration[2]], gearScaledRadii[sceneGearConfiguration[3]], 0)
+  return [p1, p2, p3, p4]
+}
+const sceneGearPositions = calculateGearPositions()
+
+function calculateGearAngularVelocities()
+{
+  // T1 = 60 min
+  const timeSpeedUp = 1
+  let v1 = 2 * Math.PI / (1000 * 60 * 60)
+  // T2 = 10min
+  let v2 = 2 * Math.PI / (1000 * 60 * 10)
+  let v3 = v2
+  // T4 = 1min
+  let v4 = 2 * Math.PI / (1000 * 60)
+  // Alternating directions
+  return [v1, -v2, -v3, v4].map(v => timeSpeedUp * v)
+}
+
+const sceneGearAngularVelocities = calculateGearAngularVelocities()
 
 let t_current = Date.now()
 let t_last = Date.now()
 
-const large_outside_radius_ratio = 1
-const large_inside_radius_ratio = 223.5/256;
-const large_pitch_radius_ratio = (large_outside_radius_ratio + large_inside_radius_ratio) / 2;
-
-const small_outside_radius_ratio = 1
-const small_inside_radius_ratio = 152/256;
-const small_pitch_radius_ratio = (small_outside_radius_ratio + small_inside_radius_ratio) / 2;
-
-const large_position = canvas_center
-const gear_distance = large_pitch_radius_ratio * large_r + small_pitch_radius_ratio * small_r;
-const small_position = [
-  large_position[0] + gear_distance * Math.cos(0),
-  large_position[1] + gear_distance * Math.sin(0),
-]
-
-const large_angular_speed = 2 * Math.PI / 30000
-
-function draw_large_gear(center_position, angle, draw_debug=false)
+function drawClockOutline(center_position)
 {
-  draw_gear(center_position, large_r, angle, large_gear_svg)
-  if(draw_debug)
-  {
-    draw_gear_debug_info(
-      center_position, 
-      large_r, 
-      large_inside_radius_ratio,
-      large_pitch_radius_ratio,
-      large_outside_radius_ratio
-    )
-  }
+  ctx.save()
+  ctx.drawImage(
+    clockOutlinePng, 
+    center_position[0] - clockScale * clockOutlinePng.width/2, 
+    center_position[1] - clockScale * clockOutlinePng.height/2, 
+    clockScale * clockOutlinePng.width, 
+    clockScale * clockOutlinePng.height
+  );
+  ctx.restore();
 }
 
-function draw_small_gear(center_position, angle, draw_debug=false)
+function drawClockHand(position, color, angle, phase)
 {
-  draw_gear(center_position, small_r, angle, small_gear_svg)
-  if(draw_debug)
-  {
-    draw_gear_debug_info(
-      center_position, 
-      small_r, 
-      small_inside_radius_ratio,
-      small_pitch_radius_ratio,
-      small_outside_radius_ratio
-    )
-  }
+  let w = 2, h = 80
+  let x = position[0]
+  let y = position[1]
+
+  ctx.save()
+
+  ctx.translate(x, y)
+  ctx.rotate(phase + angle)
+  ctx.translate(-x, -y)
+  ctx.beginPath()
+  ctx.rect(x - w/2, y, w, h)
+  let oldStyle = ctx.fillStyle;
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.fillStyle = oldStyle;
+  ctx.closePath()
+  ctx.restore()
 }
 
 function draw_gear(center_position, radius, angle, img)
@@ -110,11 +140,9 @@ function draw_circle(p, r, fill_color, outline_color)
 function draw_gear_debug_info(
   center_position, 
   radius,
-  inside_radius_ratio,
   pitch_radius_ratio,
   outside_radius_ratio)
 {
-  //draw_circle(center_position, inside_radius_ratio * radius, "#ff000088", null);
   draw_circle(center_position, pitch_radius_ratio * radius, null, "#00ff00");
   draw_circle(center_position, outside_radius_ratio * radius, null, "#00ffff");
 }
@@ -126,13 +154,24 @@ function draw()
   t_last = t_current
 
   ctx.clearRect(0, 0, canvas.width, canvas.height)
+  
+  for(let i = 0; i < sceneGearPositions.length; ++i)
+  {
+    sceneGearAngles[i] += dt * sceneGearAngularVelocities[i]
+    const gearId = sceneGearConfiguration[i]
 
-  let da = large_angular_speed * dt
-  large_angle += da
-  small_angle += magic_ratio_constant * -da * large_r / small_r
+    let position = sceneGearPositions[i]
 
-  draw_large_gear(large_position, large_angle);
-  draw_small_gear(small_position, small_angle);
+    draw_gear(position, gearScaledRadii[gearId], sceneGearAngles[i], gearSvgs[gearId]);
+  }  
+
+  // Minute hand
+  drawClockOutline(sceneGearPositions[0])
+  drawClockHand(sceneGearPositions[0], '#000000', sceneGearAngles[0], minuteHandlePhase)
+
+  // Second hand
+  drawClockOutline(sceneGearPositions[3])
+  drawClockHand(sceneGearPositions[3], '#ff0000', sceneGearAngles[3], secondHandlePhase)
 }
 
 setInterval(draw, 10)
