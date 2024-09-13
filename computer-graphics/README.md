@@ -17,3 +17,8 @@ Deadlines:
 -
 -
 -
+
+
+## Mini tasks
+
+### Mini task 1 (bonus points)
