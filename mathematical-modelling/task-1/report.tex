@@ -6,7 +6,7 @@
 \usepackage{amssymb}
 \usepackage[T1]{fontenc}
 \usepackage[lithuanian]{babel}
-
+\usepackage{minted}
 % Margins
 \topmargin=-0.45in
 \evensidemargin=0in
@@ -14,7 +14,7 @@
 \textwidth=6.5in
 \textheight=9.0in
 \headsep=0.25in
-
+    
 \title{ Pirmas laboratorinis darbas}
 \author{ Arnas Vaicekauskas }
 \date{\today}
@@ -24,14 +24,16 @@
 
 \section{Pirmas pratimas}
 
-\subsection{Sprendimas}
-
-\setlength{\jot}{10px}
+Turime paprastąją pirmos eilės diferencialinę lygtį
 
 $$
 2+y^2+\sqrt{5-x^2}yy'=0
 $$
 
+
+\subsection{Sprendimas}
+
+% \setlength{\jot}{10px}
 Kintamieji atsiskiria atlikus porą elementarių pertvarkymų:
 
 \begin{equation}
@@ -79,14 +81,35 @@ tada
 
 \subsection{Palyginimas}
 
-Skitingos spalvos naudojamos vaizduoti sprendinius su skirtingomis $C$ reikšmėmis.
+Sprendiniai palyginimui buvo rasti naudojant 
+python programavimo kalbą su sympy paketu. 
+Toliau pavaizduotas kodas naudotas rasti sprendinį:
+
+% \begin{minted}{python}
+% from sympy import *
+% x = symbols('x')
+% y = Function('y')(x)
+% equation = Eq(2 + y**2 + y.diff(x) * y * sqrt(5 - x**2), 0)
+% solutions = dsolve(equation)
+% display(solutions[0], solutions[1])
+% \end{minted}
+
+Rastas sprendinys turi forma:
+
+\begin{equation}
+y=\pm\sqrt{Ce^{-2\arcsin(\frac{\sqrt{5}x}{5})}-2}
+\end{equation}
+
+Akivaizdu, kad šis sprendinys ekvivalentus mūsų sprendiniui.
+
+Skirtingos spalvos naudojamos vaizduoti sprendinius su skirtingomis $C$ reikšmėmis.
 Vientisos linijos vaizduoja sprendinį gautą analitiniu metodu, kuris aprašytas šiame dokumente.
-Praretinti taškai žymi sprendį, kuris buvo apskaičiuotas skaitiniu metodu su automatiniu sprendėju.
+Praretinti taškai žymi sprendinį, kuris buvo apskaičiuotas skaitiniu metodu.
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.5\textwidth]{1.png}
-    \caption{Integralinės kreivės $C$ reikšmėm $0.5, 1, 2, 4$}
+    \caption{Lygties $2+y^2+\sqrt{5-x^2}yy'=0$ integralinės kreivės su $C$ reikšmėmis $0.5, 1, 2, 4$}
     \label{fig:pvz1}
 \end{figure}
 
