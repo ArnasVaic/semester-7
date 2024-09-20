@@ -4,7 +4,7 @@ const ctx = canvas.getContext("2d")
 const gear_width = 512
 const gear_height = 512
 const gear_image = new Image()
-gear_image.src = "assets/gear2.png"
+gear_image.src = "assets/gear.png"
 
 const x0 = (canvas.width - gear_width) / 2;
 const y0 = (canvas.height - gear_height) / 2;
