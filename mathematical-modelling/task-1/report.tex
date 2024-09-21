@@ -6,7 +6,8 @@
 \usepackage{amssymb}
 \usepackage[T1]{fontenc}
 \usepackage[lithuanian]{babel}
-\usepackage{minted}
+\usepackage{listings}
+
 % Margins
 \topmargin=-0.45in
 \evensidemargin=0in
@@ -50,7 +51,26 @@ Integruojame:
         -\frac{1}{2}\int\frac{d(y^2+2)}{y^2+2}&=\arcsin{\frac{x}{\sqrt{5}}}+C\\
         -\frac{1}{2}\ln|y^2+2|&=\arcsin{\frac{x}{\sqrt{5}}}+C\\
         \ln|y^2+2|&=C-2\arcsin{\frac{x}{\sqrt{5}}}\\
-        y^2&=Ce^{-2\arcsin{\frac{x}{\sqrt{5}}}} - 2, C\in\mathbb R_{\ge 0}
+        y^2&=Ce^{-2\arcsin{\frac{x}{\sqrt{5}}}} - 2
+    \end{split}
+\end{equation}
+
+% , C\in\mathbb R_{\ge 0}
+
+Reikėtų atkreipti dėmesį, kad $y^2\geqslant 0$ todėl 
+nevisos $C$ reikšmės bus tinkamos. Galime rasti mažiausią $C$
+reikšmę su kuria lygtis turės realių sprendinių:
+
+\begin{equation}
+\max_{x\in[-\sqrt{5}, \sqrt{5}]} e^{-2\arcsin(\frac{x}{\sqrt 5})} = e^{\pi}
+\end{equation}
+
+tai
+
+\begin{equation}
+    \begin{split}
+        Ce^\pi\geqslant2\\
+        C\geqslant2e^{-\pi}
     \end{split}
 \end{equation}
 
@@ -85,14 +105,14 @@ Sprendiniai palyginimui buvo rasti naudojant
 python programavimo kalbą su sympy paketu. 
 Toliau pavaizduotas kodas naudotas rasti sprendinį:
 
-% \begin{minted}{python}
-% from sympy import *
-% x = symbols('x')
-% y = Function('y')(x)
-% equation = Eq(2 + y**2 + y.diff(x) * y * sqrt(5 - x**2), 0)
-% solutions = dsolve(equation)
-% display(solutions[0], solutions[1])
-% \end{minted}
+\begin{lstlisting}[language=Python]
+from sympy import *
+x = symbols('x')
+y = Function('y')(x)
+equation = Eq(2 + y**2 + y.diff(x) * y * sqrt(5 - x**2), 0)
+solutions = dsolve(equation)
+display(solutions[0], solutions[1])
+\end{lstlisting}
 
 Rastas sprendinys turi forma:
 
@@ -102,27 +122,58 @@ y=\pm\sqrt{Ce^{-2\arcsin(\frac{\sqrt{5}x}{5})}-2}
 
 Akivaizdu, kad šis sprendinys ekvivalentus mūsų sprendiniui.
 
-Skirtingos spalvos naudojamos vaizduoti sprendinius su skirtingomis $C$ reikšmėmis.
-Vientisos linijos vaizduoja sprendinį gautą analitiniu metodu, kuris aprašytas šiame dokumente.
-Praretinti taškai žymi sprendinį, kuris buvo apskaičiuotas skaitiniu metodu.
+\newpage
+
+\subsection{Integralinės kreivės}
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.5\textwidth]{1.png}
-    \caption{Lygties $2+y^2+\sqrt{5-x^2}yy'=0$ integralinės kreivės su $C$ reikšmėmis $0.5, 1, 2, 4$}
+    \includegraphics[width=0.5\textwidth]{1-updated.png}
+    \caption{Lygties $2+y^2+\sqrt{5-x^2}yy'=0$ integralinės kreivės, kai $C$ reikšmė $1, 2, 3, 4$}
     \label{fig:pvz1}
 \end{figure}
+
+Kodas, sugeneruojantis integralinių kreivių pavaizdavimą 
+taip pat buvo parašytas su python programavimo kalba 
+naudojantis numpy bei matplotlib paketais.
+
+\begin{lstlisting}[language=Python]
+import numpy as np
+import matplotlib.pyplot as plt
+
+def y(x, C):
+    return np.sqrt(C * np.exp(-2 * np.arcsin(x / np.sqrt(5))) - 2)
+
+cs = [ 1, 2, 3, 4 ]
+colors = [ 'cyan', 'magenta', 'blue', 'red' ]
+
+plt.xlim(-np.sqrt(5), np.sqrt(5) * np.sin(0.5 * np.log(2)))
+plt.ylim(-8, 8)
+plt.xlabel("x")
+plt.ylabel("y")
+
+for c, color in zip(cs, colors):
+    x_start = -np.sqrt(5) + 0.01
+    x_end = np.sqrt(5) * np.sin(0.5 * np.log(c / 2))
+    xs = np.linspace(x_start, x_end, 1000)
+    ys = y(xs, c)
+    plt.plot(xs, ys, color=color, label=f'C={c}')
+    plt.plot(xs, -ys, color=color)
+plt.legend()
+\end{lstlisting}
 
 \newpage
 \section{Antras pratimas}
 
-\subsection{Sprendimas}
+Turime paprastąją pirmos eilės diferencialinę lygtį:
 
 \begin{equation}
     3x^3y'=y(3x^2-y^2)
 \end{equation}
 
-Atliekame elementarų pertvarkymą:
+\subsection{Sprendimas}
+
+Galime pastebėti, kad tai yra pirmos eilės homogeninė lygtis:
 
 \begin{equation}
 \begin{split}
@@ -136,7 +187,7 @@ Atliekame elementarų pertvarkymą:
 \begin{split}
 u'x+u=u-\frac{1}{3}u^3\\
 u'x=-\frac{1}{3}u^3\\
-\int\frac{du}{u^3}=-\frac{1}{3}\int\frac{dx}{x}\\
+\int\frac{du}{u^3}=-\frac{1}{3}\int\frac{dx}{x}, u\ne 0\rightarrow y\ne 0\\
 \frac{u^{-2}}{-2}=-\frac{1}{3}\ln|x|-\frac{1}{3}\ln|C|\\
 u^{-2}=\frac{2}{3}\ln|Cx|
 \end{split}
@@ -150,6 +201,8 @@ Gražinam keitinį:
 y^2=\frac{3x^2}{2\ln|Cx|}, C \in \mathbb{R}\setminus \{0\}
 \end{split}
 \end{equation}
+
+Dar galime pastebėti, kad išmestas sprendinys $y=0$ tenkina pradinę lygtį.
 
 \subsection{Tikrinimas}
 
@@ -174,13 +227,34 @@ Tikrinimą atliksime taip pat su "patogesne" lygties forma, padauginę abi puses
 
 \subsection{Palyginimas}
 
-Palyginimas analogiškas pirmam pratimui su šiek tiek skirtingom $C$ reikšmėm.
+Sprendiniai palyginimui buvo rasti naudojant 
+python programavimo kalbą su sympy paketu. 
+Toliau pavaizduotas kodas naudotas rasti sprendinį:
+
+\begin{lstlisting}[language=Python]
+from sympy import *
+x = symbols('x')
+y = Function('y')(x)
+equation = Eq(3 * x**3 * y.diff(x), y * (3 * x**2 - y**2))
+solutions = dsolve(equation)
+display(solutions[0], solutions[1])
+\end{lstlisting}
+
+Rastas sprendinys turi išraiška:
+
+\begin{equation}
+y=\pm\sqrt 3x\sqrt{\frac{1}{C+2\ln(x)}}
+\end{equation}
+
+Nors iš pirmo žvilgsnio sprendiniai atrodo skirtingi, nesunku parodyti, 
+kad išraiškos yra ekvivalenčios. Taip pat jų vienoduma galima įžvelgti 
+žiūrint į integralines kreives:
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.5\textwidth]{2.png}
-    \caption{Integralinės kreivės $C$ reikšmėm $0.5, 1, 1.5, 2$}
-    \label{fig:pvz2}
+    \includegraphics[width=0.5\textwidth]{2-updated-my.png}
+    \caption{Lygties $3x^3y'=y(3x^2-y^2)$ integralinės kreivės, kai $C$ reikšmės $0.5, 1, 1.5, 2$}
+    \label{fig:pvz1}
 \end{figure}
 
 \newpage

@@ -18,3 +18,25 @@ PV - projektų valdymas
   - R - oficialus dokumentas, privaloma laikytis
   - S - pripažintas dokumentas, rekomenduojama laikytis
 
+## Possible questions (seminar 2)
+
+Stakeholder - SŠ
+
+Svarbi lentelė, id: "žini", "projekto paskyrą sudaro"
+SŠ rolės projekte
+
+Įtaka/interesas
+
+Projekto pabaigoje turi būti rezultatai.
+Idėjos skaidrė: koncepcija
+Nauda vertinantis modeliai
+  - CBA - Cost benefir analysis(BCR), 
+  - Ekonominis - 
+    - NPV - Net presetn value, per kuo trumpesni laika, kuo daugiau bapkiu
+    - Payback period
+    - ROI (return on investment)
+  -
+
+## Ekonominis(NPV - Net presetn value, per kuo trumpesni laika, kuo daugiau bapkiu)
+
+
