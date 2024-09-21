@@ -41,7 +41,7 @@ Kintamieji atsiskiria atlikus porą elementarių pertvarkymų:
 \begin{equation}
 \begin{split}
 \sqrt{5-x^2}y\frac{dy}{dx}&=-(y^2+2) \\
-\frac{ydy}{-(y^2+2)}&=\frac{dx}{\sqrt{5-x^2}}
+\frac{ydy}{-(y^2+2)}&=\frac{dx}{\sqrt{5-x^2}}, x^2 < 5
 \end{split}
 \end{equation}
 
@@ -58,22 +58,22 @@ Integruojame:
 
 % , C\in\mathbb R_{\ge 0}
 
-Reikėtų atkreipti dėmesį, kad $y^2\geqslant 0$ todėl 
-nevisos $C$ reikšmės bus tinkamos. Galime rasti mažiausią $C$
-reikšmę su kuria lygtis turės realių sprendinių:
-
-\begin{equation}
-\max_{x\in[-\sqrt{5}, \sqrt{5}]} e^{-2\arcsin(\frac{x}{\sqrt 5})} = e^{\pi}
-\end{equation}
-
-tai
+Reikėtų atkreipti dėmesį, kad $y^2\geqslant 0$ todėl
 
 \begin{equation}
     \begin{split}
-        Ce^\pi\geqslant2\\
-        C\geqslant2e^{-\pi}
+        Ce^{-2\arcsin{\frac{x}{\sqrt{5}}}} - 2 \geqslant 0\\
+C \geqslant 2 e^{2\arcsin{\frac{x}{\sqrt{5}}}}
     \end{split}
 \end{equation}
+
+Galime rasti mažiausią $C$ reikšmę su kuria lygtis turės realių sprendinių:
+
+\begin{equation}
+\min_{x\in[-\sqrt{5}, \sqrt{5}]} e^{2\arcsin(\frac{x}{\sqrt 5})} = e^{-\pi}
+\end{equation}
+
+tai $$C\geqslant2e^{-\pi}$$
 
 
 \newpage
@@ -203,7 +203,14 @@ y^2=\frac{3x^2}{2\ln|Cx|}, C \neq 0
 \end{split}
 \end{equation}
 
-Dar galime pastebėti, kad išmestas sprendinys $y=0$ tenkina pradinę lygtį.
+Dar galime pastebėti, kad išmestas sprendinys $y=0$ tenkina pradinę lygtį:
+
+\begin{equation}
+\begin{split}
+3x^3(0)'=0(3x^2-0^2)\\
+0\equiv 0
+\end{split}
+\end{equation}
 
 \newpage
 \subsection{Tikrinimas}
