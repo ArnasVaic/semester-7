@@ -276,13 +276,13 @@ Lygties $3x^3y'=y(3x^2-y^2)$ integralinės kreivės
     \begin{minipage}{0.75\textwidth}
         \centering
         \includegraphics[width=.7\linewidth]{2-updated-my.png}
-        \caption{Ranka gautas sprendinys}\label{fig:pvz2}
+        \caption{Ranka gautas sprendinys $y^2=\frac{3x^2}{2\ln|Cx|}$}\label{fig:pvz2}
     \end{minipage}\hfill
 
     \begin{minipage}{0.75\textwidth}
         \centering
         \includegraphics[width=.7\linewidth]{2-updated-sympy.png}
-        \caption{Sprendinys gautas su sympy}\label{fig:pvz3}
+        \caption{Sprendinys gautas su sympy $\frac{3x^2}{\widetilde{C}+2\ln x}$}\label{fig:pvz3}
     \end{minipage}
 \end{figure}
 
@@ -346,14 +346,15 @@ plt.legend()
 \newpage
 \section{Trečias pratimas}
 
-\subsection{Sprendimas}
+Turime paprastąją, tiesinę, nehomogeninę, pirmos eilės diferencialinę lygtį su pastoviais koeficientais
 
-\begin{equation}
-\begin{cases}
-     y'+2y=x  \\
-     y(0)=1 
-\end{cases}
-\end{equation}
+$$y'+2y=x$$
+
+ir Koši sąlygą
+
+$$y(0)=1$$
+
+\subsection{Sprendimas}
 
 Pirma sprendžiame homogeninį atvejį:
 
@@ -427,7 +428,11 @@ x\equiv x
 \end{split}
 \end{equation}
 
-Koši sprendinys:
+Gavome ekvivalentumą tai reiškia, kad rastas sprendinys tenkina lygtį.
+
+\subsection*{Koši sprendinys}
+
+Raskime koši sprendinį
 
 \begin{equation}
 \begin{split}
@@ -442,12 +447,35 @@ y(x)=\frac{x}{2}-\frac{1}{4}+\frac{5}{4}e^{-2x}
 \newpage
 \subsection{Palyginimas}
 
-Raudona linija vaizduoja analitinį sprendinį. Melyni taškai vaizduoja sprendinį gautą naudojant skaitinius metodus. Žalias taškas žymi pradinę sąlygą $y(0)=1$.
+Sprendiniai palyginimui buvo rasti naudojant 
+python programavimo kalbą su sympy paketu. 
+Toliau pavaizduotas kodas naudotas rasti sprendinį:
+
+\begin{lstlisting}[language=Python]
+    from sympy import *
+    x = symbols('x')
+    y = Function('y')(x)
+    equation = Eq(y.diff(x) + 2 * y,x)
+    general_solution = dsolve(equation)
+    initial_condition = {y.subs(x, 0): 1}
+    constants = solve(general_solution.rhs.subs(x, 0) - 1)
+    general_solution.subs('C1', constants[0])
+\end{lstlisting}
+
+Rastas sprendinys turi išraiška:
+
+\begin{equation}
+y=\frac{5}{4}e^{-2x}+\frac{x}{2}-\frac{1}{4}
+\end{equation}
+
+Yra akivaizdu, kad automatiškai gautas sprendinys yra ekvivalentus mūsų sprendiniui.
+
+\subsection*{Integralinė kreivė su Koši pradine sąlygą}
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.5\textwidth]{3.png}
-    \caption{Koši sprendinys}
+    \includegraphics[width=0.5\textwidth]{3-updated.png}
+    \caption{Lygties $y'+2y=x$ Koši sprendinys su Koši pradine sąlyga $y(0)=1$}
     \label{fig:pvz3}
 \end{figure}
 
