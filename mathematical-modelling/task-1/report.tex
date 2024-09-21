@@ -7,6 +7,7 @@
 \usepackage[T1]{fontenc}
 \usepackage[lithuanian]{babel}
 \usepackage{listings}
+\usepackage{subfigure}
 
 % Margins
 \topmargin=-0.45in
@@ -198,12 +199,13 @@ Gražinam keitinį:
 \begin{equation}
 \begin{split}
 \frac{x^2}{y^2}=\frac{2}{3}\ln|Cx|\\
-y^2=\frac{3x^2}{2\ln|Cx|}, C \in \mathbb{R}\setminus \{0\}
+y^2=\frac{3x^2}{2\ln|Cx|}, C \neq 0
 \end{split}
 \end{equation}
 
 Dar galime pastebėti, kad išmestas sprendinys $y=0$ tenkina pradinę lygtį.
 
+\newpage
 \subsection{Tikrinimas}
 
 Prieš tikrindami randame išvestinę "patogesnėje" išraiškoje:
@@ -243,19 +245,103 @@ display(solutions[0], solutions[1])
 Rastas sprendinys turi išraiška:
 
 \begin{equation}
-y=\pm\sqrt 3x\sqrt{\frac{1}{C+2\ln(x)}}
+y=\pm\sqrt 3x\sqrt{\frac{1}{\widetilde{C}+2\ln(x)}}
 \end{equation}
 
 Nors iš pirmo žvilgsnio sprendiniai atrodo skirtingi, nesunku parodyti, 
-kad išraiškos yra ekvivalenčios. Taip pat jų vienoduma galima įžvelgti 
-žiūrint į integralines kreives:
+kad išraiškos apibudina tas pačias kreives. Svarbu pastebėti, kad $C$ ir $\widetilde{C}$ reikšmės
+skirsis, tačiau nėra sunku surasti transformaciją iš vienos konstantos į kitą.
+
+Pirmiausiai pertvarkome automatiškai gautą sprendinį į panašesnę formą:
+
+\begin{equation}
+y^2=\left(\pm\sqrt 3x\sqrt{\frac{1}{\widetilde{C}+2\ln(x)}}\right)^2=\frac{3x^2}{\widetilde{C}+2\ln x}
+\end{equation}
+
+Galime pertvarkyti mūsų sprendinį į tokią pat formą:
+
+\begin{equation}
+y^2=\frac{3x^2}{2\ln Cx}=\frac{3x^2}{2\ln C + 2\ln x}
+\end{equation}
+
+Iš čia matom, kad $\widetilde{C}=2\ln C$
+
+\newpage
+\subsection{Integralinės kreivės}
+
+Lygties $3x^3y'=y(3x^2-y^2)$ integralinės kreivės
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.5\textwidth]{2-updated-my.png}
-    \caption{Lygties $3x^3y'=y(3x^2-y^2)$ integralinės kreivės, kai $C$ reikšmės $0.5, 1, 1.5, 2$}
-    \label{fig:pvz1}
+    \begin{minipage}{0.75\textwidth}
+        \centering
+        \includegraphics[width=.7\linewidth]{2-updated-my.png}
+        \caption{Ranka gautas sprendinys}\label{fig:pvz2}
+    \end{minipage}\hfill
+
+    \begin{minipage}{0.75\textwidth}
+        \centering
+        \includegraphics[width=.7\linewidth]{2-updated-sympy.png}
+        \caption{Sprendinys gautas su sympy}\label{fig:pvz3}
+    \end{minipage}
 \end{figure}
+
+\newpage
+Kodas naudotas sugeneruoti pirmą paveikslėlį:
+
+\begin{lstlisting}[language=Python]
+import numpy as np
+import matplotlib.pyplot as plt
+
+def y(x, C):
+    return np.sqrt(3/2 * x**2 / np.log(C * x))
+
+cs = [ 0.5, 1, 1.5, 2 ]
+colors = [ 'cyan', 'magenta', 'blue', 'red' ]
+
+plt.xlim(0, 4)
+plt.ylim(-10, 10)
+plt.xlabel("x")
+plt.ylabel("y")
+
+for c, color in zip(cs, colors):
+    xs = np.linspace(1/c, 4, 10000)
+    ys = y(xs, c)
+    plt.plot(xs, ys, color=color, label=f'C={c}')
+    plt.plot(xs, -ys, color=color)
+plt.legend()
+\end{lstlisting}
+
+\newpage
+Kodas naudotas sugeneruoti antrą paveikslėlį:
+
+\begin{lstlisting}[language=Python]
+import numpy as np
+import matplotlib.pyplot as plt
+from sympy import * 
+
+x = symbols('x')
+y = Function('y')(x)
+equation = Eq(3 * x**3 * y.diff(x), y * (3 * x**2 - y**2))
+solutions = dsolve(equation)
+
+cs = [ 0.5, 1, 1.5, 2 ]
+colors = [ 'cyan', 'magenta', 'blue', 'red' ]
+
+plt.xlim(0, 4)
+plt.ylim(-10, 10)
+plt.xlabel("x")
+plt.ylabel("y")
+
+for c, color in zip(cs, colors):
+    adjusted_c = 2 * np.log(c)
+    xs = np.linspace(1/c+0.001, 4, 1000)
+    sol = solutions[0].rhs.subs('C1', adjusted_c)
+    ys = np.array([ sol.subs(x, xi).evalf() for xi in xs ])
+    plt.plot(xs, ys, color=color, label=f'$\widetilde{{C}}=2\ln {c}$')
+    plt.plot(xs, -ys, color=color)
+plt.legend()
+\end{lstlisting}
 
 \newpage
 \section{Trečias pratimas}
