@@ -6,8 +6,8 @@ const clockScale = 1/4
 const clockOutlinePng = new Image()
 clockOutlinePng.src = "assets/clock.png" 
 
-const secondHandlePhase = Math.PI + 2 * Math.PI * (1 + (new Date).getSeconds()) / 60
-const minuteHandlePhase = Math.PI + 2 * Math.PI * (1 + (new Date).getMinutes()) / 60
+const secondHandlePhase = Math.PI + 2 * Math.PI * ((new Date).getSeconds()) / 60
+const minuteHandlePhase = Math.PI + 2 * Math.PI * ((new Date).getMinutes()) / 60
 
 function nextGearPosition(
   previousGearPosition,
