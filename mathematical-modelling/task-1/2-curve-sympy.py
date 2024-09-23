@@ -18,10 +18,10 @@ plt.ylabel("y")
 
 for c, color in zip(cs, colors):
     adjusted_c = 2 * np.log(c)
-    xs = np.linspace(1/adjusted_c, 4, 1000)
+    xs = np.linspace(1/c+0.001, 4, 1000)
     sol = solutions[0].rhs.subs('C1', adjusted_c)
     ys = np.array([ sol.subs(x, xi).evalf() for xi in xs ])
-    plt.plot(xs, ys, color=color, label=f'C={adjusted_c:02f}')
+    plt.plot(xs, ys, color=color, label=f'$\widetilde{{C}}=2\ln {c}$')
     plt.plot(xs, -ys, color=color)
 plt.legend()
 # %%

@@ -7,6 +7,7 @@
 \usepackage[T1]{fontenc}
 \usepackage[lithuanian]{babel}
 \usepackage{listings}
+\usepackage{subfigure}
 
 % Margins
 \topmargin=-0.45in
@@ -40,7 +41,7 @@ Kintamieji atsiskiria atlikus porą elementarių pertvarkymų:
 \begin{equation}
 \begin{split}
 \sqrt{5-x^2}y\frac{dy}{dx}&=-(y^2+2) \\
-\frac{ydy}{-(y^2+2)}&=\frac{dx}{\sqrt{5-x^2}}
+\frac{ydy}{-(y^2+2)}&=\frac{dx}{\sqrt{5-x^2}}, x^2 < 5
 \end{split}
 \end{equation}
 
@@ -57,22 +58,22 @@ Integruojame:
 
 % , C\in\mathbb R_{\ge 0}
 
-Reikėtų atkreipti dėmesį, kad $y^2\geqslant 0$ todėl 
-nevisos $C$ reikšmės bus tinkamos. Galime rasti mažiausią $C$
-reikšmę su kuria lygtis turės realių sprendinių:
-
-\begin{equation}
-\max_{x\in[-\sqrt{5}, \sqrt{5}]} e^{-2\arcsin(\frac{x}{\sqrt 5})} = e^{\pi}
-\end{equation}
-
-tai
+Reikėtų atkreipti dėmesį, kad $y^2\geqslant 0$ todėl
 
 \begin{equation}
     \begin{split}
-        Ce^\pi\geqslant2\\
-        C\geqslant2e^{-\pi}
+        Ce^{-2\arcsin{\frac{x}{\sqrt{5}}}} - 2 \geqslant 0\\
+C \geqslant 2 e^{2\arcsin{\frac{x}{\sqrt{5}}}}
     \end{split}
 \end{equation}
+
+Galime rasti mažiausią $C$ reikšmę su kuria lygtis turės realių sprendinių:
+
+\begin{equation}
+\min_{x\in[-\sqrt{5}, \sqrt{5}]} e^{2\arcsin(\frac{x}{\sqrt 5})} = e^{-\pi}
+\end{equation}
+
+tai $$C\geqslant2e^{-\pi}$$
 
 
 \newpage
@@ -198,12 +199,20 @@ Gražinam keitinį:
 \begin{equation}
 \begin{split}
 \frac{x^2}{y^2}=\frac{2}{3}\ln|Cx|\\
-y^2=\frac{3x^2}{2\ln|Cx|}, C \in \mathbb{R}\setminus \{0\}
+y^2=\frac{3x^2}{2\ln|Cx|}, C \neq 0
 \end{split}
 \end{equation}
 
-Dar galime pastebėti, kad išmestas sprendinys $y=0$ tenkina pradinę lygtį.
+Dar galime pastebėti, kad išmestas sprendinys $y=0$ tenkina pradinę lygtį:
 
+\begin{equation}
+\begin{split}
+3x^3(0)'=0(3x^2-0^2)\\
+0\equiv 0
+\end{split}
+\end{equation}
+
+\newpage
 \subsection{Tikrinimas}
 
 Prieš tikrindami randame išvestinę "patogesnėje" išraiškoje:
@@ -243,31 +252,116 @@ display(solutions[0], solutions[1])
 Rastas sprendinys turi išraiška:
 
 \begin{equation}
-y=\pm\sqrt 3x\sqrt{\frac{1}{C+2\ln(x)}}
+y=\pm\sqrt 3x\sqrt{\frac{1}{\widetilde{C}+2\ln(x)}}
 \end{equation}
 
 Nors iš pirmo žvilgsnio sprendiniai atrodo skirtingi, nesunku parodyti, 
-kad išraiškos yra ekvivalenčios. Taip pat jų vienoduma galima įžvelgti 
-žiūrint į integralines kreives:
+kad išraiškos apibudina tas pačias kreives. Svarbu pastebėti, kad $C$ ir $\widetilde{C}$ reikšmės
+skirsis, tačiau nėra sunku surasti transformaciją iš vienos konstantos į kitą.
+
+Pirmiausiai pertvarkome automatiškai gautą sprendinį į panašesnę formą:
+
+\begin{equation}
+y^2=\left(\pm\sqrt 3x\sqrt{\frac{1}{\widetilde{C}+2\ln(x)}}\right)^2=\frac{3x^2}{\widetilde{C}+2\ln x}
+\end{equation}
+
+Galime pertvarkyti mūsų sprendinį į tokią pat formą:
+
+\begin{equation}
+y^2=\frac{3x^2}{2\ln Cx}=\frac{3x^2}{2\ln C + 2\ln x}
+\end{equation}
+
+Iš čia matom, kad $\widetilde{C}=2\ln C$
+
+\newpage
+\subsection{Integralinės kreivės}
+
+Lygties $3x^3y'=y(3x^2-y^2)$ integralinės kreivės
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.5\textwidth]{2-updated-my.png}
-    \caption{Lygties $3x^3y'=y(3x^2-y^2)$ integralinės kreivės, kai $C$ reikšmės $0.5, 1, 1.5, 2$}
-    \label{fig:pvz1}
+    \begin{minipage}{0.75\textwidth}
+        \centering
+        \includegraphics[width=.7\linewidth]{2-updated-my.png}
+        \caption{Ranka gautas sprendinys $y^2=\frac{3x^2}{2\ln|Cx|}$}\label{fig:pvz2}
+    \end{minipage}\hfill
+
+    \begin{minipage}{0.75\textwidth}
+        \centering
+        \includegraphics[width=.7\linewidth]{2-updated-sympy.png}
+        \caption{Sprendinys gautas su sympy $\frac{3x^2}{\widetilde{C}+2\ln x}$}\label{fig:pvz3}
+    \end{minipage}
 \end{figure}
+
+\newpage
+Kodas naudotas sugeneruoti pirmą paveikslėlį:
+
+\begin{lstlisting}[language=Python]
+import numpy as np
+import matplotlib.pyplot as plt
+
+def y(x, C):
+    return np.sqrt(3/2 * x**2 / np.log(C * x))
+
+cs = [ 0.5, 1, 1.5, 2 ]
+colors = [ 'cyan', 'magenta', 'blue', 'red' ]
+
+plt.xlim(0, 4)
+plt.ylim(-10, 10)
+plt.xlabel("x")
+plt.ylabel("y")
+
+for c, color in zip(cs, colors):
+    xs = np.linspace(1/c, 4, 10000)
+    ys = y(xs, c)
+    plt.plot(xs, ys, color=color, label=f'C={c}')
+    plt.plot(xs, -ys, color=color)
+plt.legend()
+\end{lstlisting}
+
+\newpage
+Kodas naudotas sugeneruoti antrą paveikslėlį:
+
+\begin{lstlisting}[language=Python]
+import numpy as np
+import matplotlib.pyplot as plt
+from sympy import * 
+
+x = symbols('x')
+y = Function('y')(x)
+equation = Eq(3 * x**3 * y.diff(x), y * (3 * x**2 - y**2))
+solutions = dsolve(equation)
+
+cs = [ 0.5, 1, 1.5, 2 ]
+colors = [ 'cyan', 'magenta', 'blue', 'red' ]
+
+plt.xlim(0, 4)
+plt.ylim(-10, 10)
+plt.xlabel("x")
+plt.ylabel("y")
+
+for c, color in zip(cs, colors):
+    adjusted_c = 2 * np.log(c)
+    xs = np.linspace(1/c+0.001, 4, 1000)
+    sol = solutions[0].rhs.subs('C1', adjusted_c)
+    ys = np.array([ sol.subs(x, xi).evalf() for xi in xs ])
+    plt.plot(xs, ys, color=color, label=f'$\widetilde{{C}}=2\ln {c}$')
+    plt.plot(xs, -ys, color=color)
+plt.legend()
+\end{lstlisting}
 
 \newpage
 \section{Trečias pratimas}
 
-\subsection{Sprendimas}
+Turime paprastąją, tiesinę, nehomogeninę, pirmos eilės diferencialinę lygtį su pastoviais koeficientais
 
-\begin{equation}
-\begin{cases}
-     y'+2y=x  \\
-     y(0)=1 
-\end{cases}
-\end{equation}
+$$y'+2y=x$$
+
+ir Koši sąlygą
+
+$$y(0)=1$$
+
+\subsection{Sprendimas}
 
 Pirma sprendžiame homogeninį atvejį:
 
@@ -341,7 +435,11 @@ x\equiv x
 \end{split}
 \end{equation}
 
-Koši sprendinys:
+Gavome ekvivalentumą tai reiškia, kad rastas sprendinys tenkina lygtį.
+
+\subsection*{Koši sprendinys}
+
+Raskime koši sprendinį
 
 \begin{equation}
 \begin{split}
@@ -356,13 +454,55 @@ y(x)=\frac{x}{2}-\frac{1}{4}+\frac{5}{4}e^{-2x}
 \newpage
 \subsection{Palyginimas}
 
-Raudona linija vaizduoja analitinį sprendinį. Melyni taškai vaizduoja sprendinį gautą naudojant skaitinius metodus. Žalias taškas žymi pradinę sąlygą $y(0)=1$.
+Sprendiniai palyginimui buvo rasti naudojant 
+python programavimo kalbą su sympy paketu. 
+Toliau pavaizduotas kodas naudotas rasti sprendinį:
+
+\begin{lstlisting}[language=Python]
+    from sympy import *
+    x = symbols('x')
+    y = Function('y')(x)
+    equation = Eq(y.diff(x) + 2 * y,x)
+    general_solution = dsolve(equation)
+    constants = solve(general_solution.rhs.subs(x, 0) - 1)
+    general_solution.subs('C1', constants[0])
+\end{lstlisting}
+
+Rastas sprendinys turi išraiška:
+
+\begin{equation}
+y=\frac{5}{4}e^{-2x}+\frac{x}{2}-\frac{1}{4}
+\end{equation}
+
+Yra akivaizdu, kad automatiškai gautas sprendinys yra ekvivalentus mūsų sprendiniui.
+
+\subsection*{Koši sprendinys ir Koši pradinė sąlygą}
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.5\textwidth]{3.png}
-    \caption{Koši sprendinys}
+    \includegraphics[width=0.5\textwidth]{3-updated.png}
+    \caption{Lygties $y'+2y=x$ Koši sprendinys su Koši pradine sąlyga $y(0)=1$}
     \label{fig:pvz3}
 \end{figure}
+
+\newpage
+Kodas naudotas sugeneruoti iliustraciją:
+
+\begin{lstlisting}[language=Python]
+import numpy as np
+import matplotlib.pyplot as plt
+import scipy.integrate as sc
+
+def y(x):
+    return x/2 - 1/4 + 5/4 * np.exp(-2 * x)
+
+plt.xlabel("x")
+plt.ylabel("y")
+xs = np.linspace(-1, 4, 1000)
+label = '$y(x)=\\frac{5}{4}e^{-2x}+\\frac{x}{2}-\\frac{1}{4}$'
+plt.plot(xs, y(xs), color='red', label=label)
+plt.scatter([0], [1], color='blue', label=f'$y(0)=1$')
+plt.legend()
+\end{lstlisting}
 
 \end{document}
