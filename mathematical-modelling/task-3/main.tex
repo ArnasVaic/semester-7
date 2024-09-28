@@ -44,149 +44,79 @@ todėl galime formuoti charakteringąjį polinomą
 \end{align*}
 Šiuo atveju bendrasis sprendinys $x_B(t)$ turės formą 
 \begin{align}
-x_B(t)=C_1\sin(3t)+C_2\cos(3t)
+x_B(t)=C_1e^{3it}+C_2e^{-3it}
 \end{align}
 Nehomogeninę lygtį \eqref{eqs:nohom} spręsime
 konstantų variavimo metodu, todėl:
 
 \begin{align}
-x(t)=C_1(t)\sin(3t)+C_2(t)\cos(3t) \label{eqs:varsol}
+x(t)=C_1(t)e^{3it}+C_2(t)e^{-3it} \label{eqs:varsol}
 \end{align}
 
 Pagal variavimo metodą, darome prielaidą, kad 
 \begin{align}
-C_1'\sin(3t)+C_2'\cos(3t)=0  \label{eqs:assumtion}
+C_1'e^{3it}+C_2'e^{-3it}=0  \label{eqs:assumtion}
 \end{align}
 
 Prieš įstatant varijuotą bendrąjį sprendinį \eqref{eqs:varsol} apskaičiuosime $x''$ ir \\ $x''+9x$: 
 
 \begin{align*}
-x''&=(C_1'\sin(3t)+3C_1\cos(3t)+C_2'\cos(3t)-3C_2\sin(3t))'\\
-&=(\underbrace{C_1'\sin(3t)+C_2'\cos(3t)}_0+3C_1\cos(3t)-3C_2\sin(3t))'\\
-&=(3C_1\cos(3t)-3C_2\sin(3t))'\\
-&=3C_1'\cos(3t)-9C_1\sin(3t)-3C_2'\sin(3t)-9C_2\cos(3t)
+x''&=(C_1'e^{3it}+3iC_1e^{3it}+C_2'e^{-3it}-3iC_2e^{-3it})'\\
+&=(\underbrace{C_1'e^{3it}+C_2'e^{-3it}}_0+3iC_1e^{3it}-3iC_2e^{-3it})'\\
+&=(3iC_1e^{3it}-3iC_2e^{-3it})'\\
+&=3iC_1'e^{3it}-9C_1e^{3it}-3iC_2'e^{-3it}-9C_2e^{-3it}
 \end{align*}
 
 tada
 
 \begin{align*}
-x''+9x&=3C_1'\cos(3t)-9C_1\sin(3t)-3C_2'\sin(3t)-9C_2\cos(3t)+9C_1\sin(3t)+9C_2\cos(3t)\\
-&=3C_1'\cos(3t)-3C_2'\sin(3t)
+x''+9x&=3iC_1'e^{3it}-9C_1e^{3it}-3iC_2'e^{-3it}-9C_2e^{-3it}+9C_1e^{3it}+9C_2e^{-3it}\\
+&=3iC_1'e^{3it}-3iC_2'e^{-3it}
 \end{align*}
 
 Taigi, dabar sprendžiame lygtį
-\begin{align}
-3C_1'\cos(3t)-3C_2'\sin(3t)=4\sin(t)-\cos(4t) \label{eqs:1}
-\end{align}
-Iš prielaidos \eqref{eqs:assumtion} galime išsireikšti $C_1'=-C_2'\frac{\cos(3t)}{\sin(3t)}$ ir įsistatyti į \eqref{eqs:1}
-
-\begin{align}
--3C_2'\frac{\cos(3t)}{\sin(3t)}\cos(3t)-3C_2'\sin(3t)=4\sin(t)-\cos(4t) \notag\\
--3C_2'\left(\frac{\cos^2(3t)}{\sin(3t)}+\frac{\sin^2(3t)}{\sin(3t)}\right)=4\sin(t)-\cos(4t) \notag\\
--\frac{3}{\sin(3t)}C_2'=4\sin(t)-\cos(4t) \notag\\
-C_2'=\frac{1}{3}\cos(4t)\sin(3t)-\frac{4}{3}\sin(t)\sin(3t) \label{eqs:c2d}\\
-C_2=\frac{1}{3}\int\cos(4t)\sin(3t)dt-\frac{4}{3}\int\sin(t)\sin(3t)dt \label{eqs:c2}
-\end{align}
-
-Šiuos integralus išspręsime atskirai. Pradėsime nuo antro; naudodamiesi
-tapatybe \\ $\sin(\alpha)\sin(\beta)=\frac{1}{2}(\cos(\alpha-\beta)-\cos(\alpha+\beta))$
-galime suprastinti integralą:
-
 \begin{align*}
-\int\sin(3t)\sin(t)dt\\
-\frac{1}{2}\int(\cos(2t)-\cos(4t))dt\\
-\frac{1}{4}\int\cos(2t)d(2t)-\frac{1}{8}\int\cos(4t)d(4t)\\
-\frac{1}{4}\sin(2t)-\frac{1}{8}\sin(4t)\\
-\frac{1}{2}\sin(t)\cos(t)-\frac{1}{4}\sin(2t)\cos(2t)\\
-\frac{1}{2}\sin(t)\cos(t)-\frac{1}{2}\sin(t)\cos(t)(\cos^2(t)-\sin^2(t))\\
-\frac{1}{2}\sin(t)\cos(t)(1-\cos^2(t)+\sin^2(t))\\
-\frac{1}{2}\sin(t)\cos(t)(\sin^2(t)+\cos^2(t)-\cos^2(t)+\sin^2(t))\\
-\sin^3(t)\cos(t)
+3iC_1'e^{3it}-3iC_2'e^{-3it}=4\sin(t)-\cos(4t)
 \end{align*}
 
-Naudodami tapatybę $\sin(\alpha)\cos(\beta)=\frac{1}{2}(\sin(\alpha-\beta)+\sin(\alpha+\beta))$ galime išspręsti pirmąjį integralą:
-
-\begin{align*}
-\int\sin(3t)\cos(4t)dt\\
-\frac{1}{2}\int(\sin(-t)+\sin(7t))dt\\
--\frac{1}{2}\int\sin(t)dt+\frac{1}{14}\int\sin(7t)d(7t)\\
--\frac{1}{2}\int\sin(t)dt+\frac{1}{14}\int\sin(7t)d(7t)\\
-\frac{1}{2}\cos(t)-\frac{1}{14}\cos(7t)
-\end{align*}
-
-Galiausiai įsistatome gautas išraiškas atgal į \eqref{eqs:c2} ir gauname $C_2(t)$:
-
-\begin{align*}
-C_2&=\frac{1}{3}\left(\frac{1}{2}\cos(t)-\frac{1}{14}\cos(7t)\right)-\frac{4}{3}\sin^3(t)\cos(t)+\tilde{C_2}\\
-C_2(t)&=\frac{1}{6}\cos(t)-\frac{1}{42}\cos(7t)-\frac{4}{3}\sin^3(t)\cos(t)+\tilde{C_2}
-\end{align*}
-
-Norint rasti $C_1(t)$ galim įstatyti \eqref{eqs:c2d} į jau minėtą formulę $C_1'=-C_2'\frac{\cos(3t)}{\sin(3t)}$:
+Naudodami tapatybes $\sin(t)=\frac{e^{it}-e^{-it}}{2i}$, $\cos(t)=\frac{e^{it}+e^{-it}}{2}$ galime pertvarkyti lygtį:
 
 \begin{align}
-C_1'=-\frac{\cos(3t)}{\sin(3t)}\left(\frac{1}{3}\cos(4t)\sin(3t)-\frac{4}{3}\sin(t)\sin(3t)\right)\notag\\
-C_1'=\frac{4}{3}\sin(t)\cos(3t)-\frac{1}{3}\cos(4t)\cos(3t) \label{eqs:c1d}\\
-C_1=\frac{4}{3}\int\sin(t)\cos(3t)dt-\frac{1}{3}\int\cos(4t)\cos(3t)dt \label{eqs:c1}
+3iC_1'e^{3it}-3iC_2'e^{-3it}=2ie^{it}-2ie^{-it}+\frac{1}{2}e^{4it}+\frac{1}{2}e^{-4it} \label{eqs:1}
 \end{align}
 
-Šiuos integralus taip pat išspręsime atskirai. Šį kart pradėsime nuo pirmojo. Čia dar kartą galime pritaikyti 
-tapatybę $\sin(\alpha)\cos(\beta)=\frac{1}{2}(\sin(\alpha-\beta)+\sin(\alpha+\beta))$
-
-\begin{align*}
-\int\sin(t)\cos(3t)dt\\
-\frac{1}{2}\int(\sin(-2t)+\sin(4t))dt\\
--\frac{1}{4}\int\sin(2t)d(2t)+\frac{1}{8}\int\sin(4t)d(4t)\\
-\frac{1}{4}\cos(2t)-\frac{1}{8}\cos(4t)
-\end{align*}
-
-Antrajam integralui išspręsti galime panaudoti dar vieną tapatybę:
-
-$$\cos(\alpha)\cos(\beta)=\frac{1}{2}(\cos(\alpha-\beta)+\cos(\alpha+\beta))$$
-
-tada
-
-\begin{align*}
-\int\cos(4t)\cos(3t)dt=
-\frac{1}{2}\int(\cos(t)+\cos(7t))dt=
-\frac{1}{2}\sin(t)+\frac{1}{14}\sin(7t)
-\end{align*}
-
-Viską įstatę atgal į \eqref{eqs:c2} gauname, kad
-
-\begin{align*}
-C_1&=\frac{4}{3}\left(\frac{1}{4}\cos(2t)-\frac{1}{8}\cos(4t)\right)-\frac{1}{3}\left(\frac{1}{2}\sin(t)+\frac{1}{14}\sin(7t)\right)+\tilde{C_1}\\
-C_1(t)&=\frac{1}{3}\cos(2t)-\frac{1}{6}\cos(4t)-\frac{1}{6}\sin(t)-\frac{1}{42}\sin(7t)+\tilde{C_1}
-\end{align*}
-
-Galiausiai nehomogeninės lygties \eqref{eqs:nohom} analitinis sprendinys yra
+Iš prielaidos \eqref{eqs:assumtion} galime išsireikšti $C_2'=-C_1'e^{6it}$ ir įsistatyti į \eqref{eqs:1}
 
 \begin{align}
-x(t)=
-\left(\frac{\cos(2t)}{3}-\frac{\cos(4t)}{6}-\frac{\sin(t)}{6}-\frac{\sin(7t)}{42}+\tilde{C_1}\right)\sin(3t)\\
-+\left(\frac{\cos(t)}{6}-\frac{\cos(7t)}{42}-\frac{4\sin^3(t)\cos(t)}{3}+\tilde{C_2}\right)\cos(3t)
+3iC_1'e^{3it}+3iC_1'e^{6it}e^{-3it}=2ie^{it}-2ie^{-it}+\frac{1}{2}e^{4it}+\frac{1}{2}e^{-4it} \notag\\
+6iC_1'e^{3it}=2ie^{it}-2ie^{-it}+\frac{1}{2}e^{4it}+\frac{1}{2}e^{-4it} \notag\\
+C_1'=\frac{e^{-3it}}{6i}\left(2ie^{it}-2ie^{-it}+\frac{1}{2}e^{4it}+\frac{1}{2}e^{-4it}\right) \notag\\
+C_1'=\frac{e^{-2it}}{3}-\frac{e^{-4it}}{3}+\frac{e^{it}}{12i}+\frac{e^{-7it}}{12i} \label{eqs:c1d}\\
+C_1=\int\left(\frac{e^{-2it}}{3}-\frac{e^{-4it}}{3}+\frac{e^{it}}{12i}+\frac{e^{-7it}}{12i}\right)dt \notag\\
+C_1=\frac{1}{-2i}\frac{e^{-2it}}{3}-\frac{1}{-4i}\frac{e^{-4it}}{3}+\frac{1}{i}\frac{e^{it}}{12i}+\frac{1}{-7i}\frac{e^{-7it}}{12i}+\tilde{C_1}\notag\\
+C_1(t)=-\frac{e^{-2it}}{6i}+\frac{e^{-4it}}{12i}-\frac{e^{it}}{12}+\frac{e^{-7it}}{84}+\tilde{C_1} \label{eqs:c1}
 \end{align}
 
-Liko rasti Koši sprendinį:
+Į lygtį $C_2'=-C_1'e^{6it}$ įstate \eqref{eqs:c1d} gauname $C_2'$:
+
+\begin{align}
+C_2'&=-e^{6it}C_1'\notag\\
+C_2'&=-e^{6it}\left(\frac{e^{-2it}}{3}-\frac{e^{-4it}}{3}+\frac{e^{it}}{12i}+\frac{e^{-7it}}{12i}\right)\notag\\
+C_2'&=-\frac{e^{4it}}{3i}+\frac{e^{2it}}{3i}-\frac{e^{7it}}{12i}-\frac{e^{-it}}{12i}\\
+C_2&=\int\left(-\frac{e^{4it}}{3}+\frac{e^{2it}}{3}-\frac{e^{7it}}{12i}-\frac{e^{-it}}{12i}\right)dt\notag\\
+C_2&=-\frac{1}{4i}\frac{e^{4it}}{3}+\frac{1}{2i}\frac{e^{2it}}{3}-\frac{1}{7i}\frac{e^{7it}}{12i}-\frac{1}{-i}\frac{e^{-it}}{12i}+\tilde{C_2}\notag\\
+C_2&=-\frac{e^{4it}}{12i}+\frac{e^{2it}}{6i}+\frac{e^{7it}}{84}-\frac{e^{-it}}{12}+\tilde{C_2}
+\end{align}
+
+Nehomogeninės lygties sprendinys tada bus:
 
 \begin{align*}
-x(0)=0\\
-\left(\frac{1}{3}-\frac{1}{6}-\frac{0}{6}-\frac{0}{42}+\tilde{C_1}\right)0
-+\left(\frac{1}{6}-\frac{1}{42}-\frac{0}{3}+\tilde{C_2}\right)1=0\\
-\frac{1}{6}-\frac{1}{42}+\tilde{C_2}=0\\
-\tilde{C_2}=-\frac{1}{7}\\
-\end{align*}
-
-\begin{align*}
-x'(0)=1\\
-3\tilde{C_1}\cos(0)+\frac{3}{7}\sin(0)=1\\
-\tilde{C_1}=\frac{1}{3}
-\end{align*}
-
-Taigi, Koši sprendinys yra:
-\begin{align*}
-x(t)=
-\left(\frac{\cos(2t)}{3}-\frac{\cos(4t)}{6}-\frac{\sin(t)}{6}-\frac{\sin(7t)}{42}+\frac{1}{3}\right)\sin(3t)\\
-+\left(\frac{\cos(t)}{6}-\frac{\cos(7t)}{42}-\frac{4\sin^3(t)\cos(t)}{3}-\frac{1}{7}\right)\cos(3t)
+x(t)&=\left(-\frac{e^{-2it}}{6i}+\frac{e^{-4it}}{12i}-\frac{e^{it}}{12}+\frac{e^{-7it}}{84}+\tilde{C_1}\right)e^{3it}
++\left(-\frac{e^{4it}}{12i}+\frac{e^{2it}}{6i}+\frac{e^{7it}}{84}-\frac{e^{-it}}{12}+\tilde{C_2}\right)e^{-3it}\\
+x(t)&=-\frac{e^{it}}{6i}+ \frac{e^{-it}}{12i}-\frac{e^{4it}}{12}+\frac{e^{-4it}}{84}+\tilde{C_1}e^{3it}
+-\frac{e^{it}}{12i}+\frac{e^{-it}}{6i}+\frac{e^{4it}}{84}-\frac{e^{-4it}}{12}+\tilde{C_2}e^{-3it}\\
+x(t)&=\frac{1}{2}\frac{e^{it}-e^{-it}}{2}-\frac{1}{7}\frac{e^{4it}+e^{-4it}}{2}+\tilde{C_1}\frac{e^{3it}-e^{-3it}}{2}+\tilde{C_2}\frac{e^{3it}+e^{-3it}}{2}\\
+x(t)&=\frac{sin(t)}{2}-\frac{cos(4t)}{7}+\tilde{C_1}sin(3t)+\tilde{C_2}cos(3t)
 \end{align*}
 
 \section{Palyginimas su programos sprendiniu}
