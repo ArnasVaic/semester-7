@@ -24,19 +24,16 @@
 \maketitle
 
 \section{Analitinis sprendimas}
-
-Turime antros eilės tiesinę nehomogeninę lygtį su pradinėmis sąlygomis $x(0)=0,x'(0)=1$.
-
+Turime antros eilės tiesinę nehomogeninę lygtį su pradinėmis sąlygomis:
 \begin{align}
-x''+9x=4\sin(t)-\cos(4t) \label{eqs:nohom}
+x''+9x&=4\sin(t)-\cos(4t) \label{eqs:nohom}\\
+x(0)&=0\label{eqs:initial-1}\\
+x'(0)&=1\label{eqs:initial-2}
 \end{align}
-
 Pirmiausia spręsime homogeninį atvejį norint gauti bendrąjį sprendinį:
-
 \begin{align}
     x''+9x=0 \label{eqs:hom}
 \end{align}
-
 Lygtis \eqref{eqs:hom} turi pastovius koeficientus, 
 todėl galime formuoti charakteringąjį polinomą
 \begin{align*}
@@ -48,59 +45,50 @@ x_B(t)=C_1e^{3it}+C_2e^{-3it}
 \end{align}
 Nehomogeninę lygtį \eqref{eqs:nohom} spręsime
 konstantų variavimo metodu, todėl:
-
 \begin{align}
 x(t)=C_1(t)e^{3it}+C_2(t)e^{-3it} \label{eqs:varsol}
 \end{align}
-
 Pagal variavimo metodą, darome prielaidą, kad 
 \begin{align}
 C_1'e^{3it}+C_2'e^{-3it}=0  \label{eqs:assumtion}
 \end{align}
-
-Prieš įstatant varijuotą bendrąjį sprendinį \eqref{eqs:varsol} apskaičiuosime $x''$ ir \\ $x''+9x$: 
-
+Prieš įstatant varijuotą bendrąjį sprendinį \eqref{eqs:varsol} apskaičiuosime $x''$ ir $x''+9x$: 
 \begin{align*}
 x''&=(C_1'e^{3it}+3iC_1e^{3it}+C_2'e^{-3it}-3iC_2e^{-3it})'\\
 &=(\underbrace{C_1'e^{3it}+C_2'e^{-3it}}_0+3iC_1e^{3it}-3iC_2e^{-3it})'\\
 &=(3iC_1e^{3it}-3iC_2e^{-3it})'\\
 &=3iC_1'e^{3it}-9C_1e^{3it}-3iC_2'e^{-3it}-9C_2e^{-3it}
 \end{align*}
-
-tada
-
+Tada
 \begin{align*}
 x''+9x&=3iC_1'e^{3it}-9C_1e^{3it}-3iC_2'e^{-3it}-9C_2e^{-3it}+9C_1e^{3it}+9C_2e^{-3it}\\
 &=3iC_1'e^{3it}-3iC_2'e^{-3it}
 \end{align*}
-
 Taigi, dabar sprendžiame lygtį
-\begin{align*}
-3iC_1'e^{3it}-3iC_2'e^{-3it}=4\sin(t)-\cos(4t)
-\end{align*}
-
-Naudodami tapatybes $\sin(t)=\frac{e^{it}-e^{-it}}{2i}$, $\cos(t)=\frac{e^{it}+e^{-it}}{2}$ ir $\frac{1}{i}=-i$ galime pertvarkyti lygtį:
-
 \begin{align}
-3iC_1'e^{3it}-3iC_2'e^{-3it}=4\frac{e^{it}-e^{-it}}{2i}-\frac{e^{4it}+e^{-4it}}{2}\notag\\
-3iC_1'e^{3it}-3iC_2'e^{-3it}=\frac{2e^{it}}{i}-\frac{2e^{-it}}{i}-\frac{e^{4it}}{2}-\frac{e^{-4it}}{2}\notag\\
-3iC_1'e^{3it}-3iC_2'e^{-3it}=-2ie^{it}+2ie^{-it}-\frac{e^{4it}}{2}-\frac{e^{-4it}}{2}\label{eqs:1}
+3iC_1'e^{3it}-3iC_2'e^{-3it}=4\sin(t)-\cos(4t)\label{eqs:variated}
 \end{align}
-
-Iš prielaidos \eqref{eqs:assumtion} galime išsireikšti $C_2'=-C_1'e^{6it}$ ir įsistatyti į \eqref{eqs:1}
-
+Naudodami tapatybes $\sin(t)=\frac{e^{it}-e^{-it}}{2i}$, $\cos(t)=\frac{e^{it}+e^{-it}}{2}$, $\frac{1}{i}=-i$ galime pertvarkyti lygtį \eqref{eqs:variated}
 \begin{align}
-3iC_1'e^{3it}+3iC_1'e^{6it}e^{-3it}=-2ie^{it}+2ie^{-it}-\frac{e^{4it}}{2}-\frac{e^{-4it}}{2} \notag\\
-6iC_1'e^{3it}=-2ie^{it}+2ie^{-it}-\frac{e^{4it}}{2}-\frac{e^{-4it}}{2} \notag\\
-C_1'=\frac{e^{-3it}}{6i}\left(-2ie^{it}+2ie^{-it}-\frac{e^{4it}}{2}-\frac{e^{-4it}}{2}\right) \notag\\
-C_1'=-\frac{e^{-2it}}{3}+\frac{e^{-4it}}{3}-\frac{e^{it}}{12i}-\frac{e^{-7it}}{12i} \label{eqs:c1d}\\
-C_1=\int\left(-\frac{e^{-2it}}{3}+\frac{e^{-4it}}{3}-\frac{e^{it}}{12i}-\frac{e^{-7it}}{12i}\right)dt \notag\\
-C_1=-\frac{1}{-2i}\frac{e^{-2it}}{3}+\frac{1}{-4i}\frac{e^{-4it}}{3}-\frac{1}{i}\frac{e^{it}}{12i}-\frac{1}{-7i}\frac{e^{-7it}}{12i}+\tilde{C_1}\notag\\
-C_1(t)=\frac{e^{-2it}}{6i}-\frac{e^{-4it}}{12i}+\frac{e^{it}}{12}-\frac{e^{-7it}}{84}+\tilde{C_1} \label{eqs:c1}
+3iC_1'e^{3it}-3iC_2'e^{-3it}&=4\frac{e^{it}-e^{-it}}{2i}-\frac{e^{4it}+e^{-4it}}{2}\notag\\
+3iC_1'e^{3it}-3iC_2'e^{-3it}&=\frac{2e^{it}}{i}-\frac{2e^{-it}}{i}-\frac{e^{4it}}{2}-\frac{e^{-4it}}{2}\notag\\
+3iC_1'e^{3it}-3iC_2'e^{-3it}&=-2ie^{it}+2ie^{-it}-\frac{e^{4it}}{2}-\frac{e^{-4it}}{2}\label{eqs:1}
 \end{align}
-
-Į lygtį $C_2'=-C_1'e^{6it}$ įstate \eqref{eqs:c1d} gauname $C_2'$:
-
+Iš prielaidos \eqref{eqs:assumtion} galime išsireikšti $C_2'$
+\begin{align}
+C_2'=-C_1'e^{6it} \label{eqs:c1c2}    
+\end{align}
+Tuomet įstatome lygties \eqref{eqs:c1c2} dešinę pusę į lygtį \eqref{eqs:1}
+\begin{align}
+3iC_1'e^{3it}+3iC_1'e^{6it}e^{-3it}&=-2ie^{it}+2ie^{-it}-\frac{e^{4it}}{2}-\frac{e^{-4it}}{2} \notag\\
+6iC_1'e^{3it}&=-2ie^{it}+2ie^{-it}-\frac{e^{4it}}{2}-\frac{e^{-4it}}{2} \notag\\
+C_1'&=\frac{e^{-3it}}{6i}\left(-2ie^{it}+2ie^{-it}-\frac{e^{4it}}{2}-\frac{e^{-4it}}{2}\right) \notag\\
+C_1'&=-\frac{e^{-2it}}{3}+\frac{e^{-4it}}{3}-\frac{e^{it}}{12i}-\frac{e^{-7it}}{12i} \label{eqs:c1d}\\
+C_1&=\int\left(-\frac{e^{-2it}}{3}+\frac{e^{-4it}}{3}-\frac{e^{it}}{12i}-\frac{e^{-7it}}{12i}\right)dt \notag\\
+C_1&=-\frac{1}{-2i}\frac{e^{-2it}}{3}+\frac{1}{-4i}\frac{e^{-4it}}{3}-\frac{1}{i}\frac{e^{it}}{12i}-\frac{1}{-7i}\frac{e^{-7it}}{12i}+\tilde{C_1}\notag\\
+C_1(t)&=\frac{e^{-2it}}{6i}-\frac{e^{-4it}}{12i}+\frac{e^{it}}{12}-\frac{e^{-7it}}{84}+\tilde{C_1} \label{eqs:c1}
+\end{align}
+Į lygtį \eqref{eqs:c1c2} įstate \eqref{eqs:c1d} gauname $C_2'$ ir integrave gauname $C_2$:
 \begin{align}
 C_2'&=-e^{6it}C_1'\notag\\
 C_2'&=-e^{6it}\left(-\frac{e^{-2it}}{3}+\frac{e^{-4it}}{3}-\frac{e^{it}}{12i}-\frac{e^{-7it}}{12i}\right)\notag\\
@@ -109,20 +97,16 @@ C_2&=\int\left(\frac{e^{4it}}{3}-\frac{e^{2it}}{3}+\frac{e^{7it}}{12i}+\frac{e^{
 C_2&=\frac{1}{4i}\frac{e^{4it}}{3}-\frac{1}{2i}\frac{e^{2it}}{3}+\frac{1}{7i}\frac{e^{7it}}{12i}+\frac{1}{-i}\frac{e^{-it}}{12i}+\tilde{C_2}\notag\\
 C_2&=\frac{e^{4it}}{12i}-\frac{e^{2it}}{6i}-\frac{e^{7it}}{84}+\frac{e^{-it}}{12}+\tilde{C_2}
 \end{align}
-
 Nehomogeninės lygties sprendinys tada bus:
-
-\begin{align*}
+\begin{align}
 x(t)&=\left(\frac{e^{-2it}}{6i}-\frac{e^{-4it}}{12i}+\frac{e^{it}}{12}-\frac{e^{-7it}}{84}+\tilde{C_1}\right)e^{3it}
-+\left(\frac{e^{4it}}{12i}-\frac{e^{2it}}{6i}-\frac{e^{7it}}{84}+\frac{e^{-it}}{12}+\tilde{C_2}\right)e^{-3it}\\
++\left(\frac{e^{4it}}{12i}-\frac{e^{2it}}{6i}-\frac{e^{7it}}{84}+\frac{e^{-it}}{12}+\tilde{C_2}\right)e^{-3it}\notag\\
 x(t)&=\frac{e^{it}}{6i}-\frac{e^{-it}}{12i}+\frac{e^{4it}}{12}-\frac{e^{-4it}}{84}+\tilde{C_1}e^{3it}
-+\frac{e^{it}}{12i}-\frac{e^{-it}}{6i}-\frac{e^{4it}}{84}+\frac{e^{-4it}}{12}+\tilde{C_2}e^{-3it}\\
-x(t)&=\frac{1}{2}\frac{e^{it}-e^{-it}}{2i}+\frac{1}{7}\frac{e^{4it}+e^{-4it}}{2}+\tilde{C_1}\frac{e^{3it}-e^{-3it}}{2i}+\tilde{C_2}\frac{e^{3it}+e^{-3it}}{2}\\
-x(t)&=\frac{\sin(t)}{2}+\frac{\cos(4t)}{7}+\tilde{C_1}\sin(3t)+\tilde{C_2}\cos(3t)
-\end{align*}
-
-Randame koši sprendinį:
-
++\frac{e^{it}}{12i}-\frac{e^{-it}}{6i}-\frac{e^{4it}}{84}+\frac{e^{-4it}}{12}+\tilde{C_2}e^{-3it}\notag\\
+x(t)&=\frac{1}{2}\frac{e^{it}-e^{-it}}{2i}+\frac{1}{7}\frac{e^{4it}+e^{-4it}}{2}+\tilde{C_1}\frac{e^{3it}-e^{-3it}}{2i}+\tilde{C_2}\frac{e^{3it}+e^{-3it}}{2}\notag\\
+x(t)&=\frac{\sin(t)}{2}+\frac{\cos(4t)}{7}+\tilde{C_1}\sin(3t)+\tilde{C_2}\cos(3t)\label{eqs:gen-sol}
+\end{align}
+Randame Koši sprendinį įstatant pradines sąlygas \eqref{eqs:initial-1} ir \eqref{eqs:initial-2} į lygtį \eqref{eqs:gen-sol}:
 \begin{align*}
 x(0)=0\\
 \frac{0}{2}+\frac{\cos(0)}{7}+\tilde{C_1}\sin(0)+\tilde{C_2}\cos(0)=0\\
@@ -135,13 +119,10 @@ x'(0)=1\\
 \frac{1}{2}+3\tilde{C_1}=1\\
 \tilde{C_1}=\frac{1}{6}\\
 \end{align*}
-
 Koši sprendinys:
-
 \begin{align}
 x(t)&=\frac{\sin(t)}{2}+\frac{\cos(4t)}{7}+\frac{\sin(3t)}{6}-\frac{\cos(3t)}{7}
 \end{align}
-
 \section{Palyginimas su programos sprendiniu}
 
 Programa rasti lygties \eqref{eqs:nohom} sprendiniui buvo rašyta su python programavimo
