@@ -124,29 +124,27 @@ Koši sprendinys:
 x(t)&=\frac{\sin(t)}{2}+\frac{\cos(4t)}{7}+\frac{\sin(3t)}{6}-\frac{\cos(3t)}{7}
 \end{align}
 \section{Palyginimas su programos sprendiniu}
-
 Programa rasti lygties \eqref{eqs:nohom} sprendiniui buvo rašyta su python programavimo
-kalba bei sympy paketu. Kodas randantis Koši sprendinį:
-
-\begin{lstlisting}[language=Python]
-from sympy import *
-t = symbols('t')
-x = Function('x')(t)
-equation = Eq(x.diff(t, 2) + 9*x, 4 * sin(t) - cos(4 * t))
-general_solution = dsolve(equation, x).rhs
-conditions = [
-    Eq(general_solution.subs(t, 0), 0),
-    Eq(general_solution.diff(t).subs(t, 0), 1)
-]
-C_values = solve(conditions, symbols("C1, C2"))
-general_solution.subs(C_values)
-\end{lstlisting}
-
-Programos rastas sprendinys:
-
-$$
+kalba bei sympy paketu. Programa rastas sprendinys
+\begin{align}
 x(t)=\frac{\sin(t)}{2}+\frac{\sin(3t)}{6}-\frac{\cos(3t)}{7}+\frac{\cos(4t)}{7}
-$$
+\end{align}
+Yra akivaizdu, kad analitiškai ir programa gauti sprendiniai yra ekvivalentūs
+\section{Priedai}
+Kodas naudotas rasti lygties \eqref{eqs:nohom} Koši sprendinį su pradinėmis sąlygomis \eqref{eqs:initial-1} ir \eqref{eqs:initial-2}
+\begin{lstlisting}[language=Python]
+    from sympy import *
+    t = symbols('t')
+    x = Function('x')(t)
+    equation = Eq(x.diff(t, 2) + 9*x, 4 * sin(t) - cos(4 * t))
+    general_solution = dsolve(equation, x).rhs
+    conditions = [
+        Eq(general_solution.subs(t, 0), 0),
+        Eq(general_solution.diff(t).subs(t, 0), 1)
+    ]
+    C_values = solve(conditions, symbols("C1, C2"))
+    general_solution.subs(C_values)
+    \end{lstlisting}
 
 \end{document}
 
