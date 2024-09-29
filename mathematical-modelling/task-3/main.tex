@@ -2,9 +2,14 @@
 
 \usepackage{graphicx}
 \usepackage{amsmath}
+\usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[lithuanian]{babel}
 \usepackage{listings}
+\lstset{
+    inputencoding=utf8,
+    extendedchars=false
+}
 
 \usepackage[
     a4paper,
@@ -121,7 +126,7 @@ x'(0)=1\\
 \end{align*}
 Koši sprendinys:
 \begin{align}
-x(t)&=\frac{\sin(t)}{2}+\frac{\cos(4t)}{7}+\frac{\sin(3t)}{6}-\frac{\cos(3t)}{7}
+x(t)&=\frac{\sin(t)}{2}+\frac{\cos(4t)}{7}+\frac{\sin(3t)}{6}-\frac{\cos(3t)}{7}\label{eqs:cauchy-sol}
 \end{align}
 \section{Palyginimas su programos sprendiniu}
 Programa rasti lygties \eqref{eqs:nohom} sprendiniui buvo rašyta su python programavimo
@@ -130,21 +135,43 @@ kalba bei sympy paketu. Programa rastas sprendinys
 x(t)=\frac{\sin(t)}{2}+\frac{\sin(3t)}{6}-\frac{\cos(3t)}{7}+\frac{\cos(4t)}{7}
 \end{align}
 Yra akivaizdu, kad analitiškai ir programa gauti sprendiniai yra ekvivalentūs
+\newpage
+\section{Sprendinio grafikas}
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.5\textwidth]{graph.png}
+\caption{Lygties \eqref{eqs:nohom} Koši sprendinys}
+\label{fig:cauchy-sol}
+\end{figure}
 \section{Priedai}
 Kodas naudotas rasti lygties \eqref{eqs:nohom} Koši sprendinį su pradinėmis sąlygomis \eqref{eqs:initial-1} ir \eqref{eqs:initial-2}
 \begin{lstlisting}[language=Python]
-    from sympy import *
-    t = symbols('t')
-    x = Function('x')(t)
-    equation = Eq(x.diff(t, 2) + 9*x, 4 * sin(t) - cos(4 * t))
-    general_solution = dsolve(equation, x).rhs
-    conditions = [
-        Eq(general_solution.subs(t, 0), 0),
-        Eq(general_solution.diff(t).subs(t, 0), 1)
-    ]
-    C_values = solve(conditions, symbols("C1, C2"))
-    general_solution.subs(C_values)
-    \end{lstlisting}
-
+from sympy import *
+t = symbols('t')
+x = Function('x')(t)
+equation = Eq(x.diff(t, 2) + 9*x, 4 * sin(t) - cos(4 * t))
+general_solution = dsolve(equation, x).rhs
+conditions = [
+    Eq(general_solution.subs(t, 0), 0),
+    Eq(general_solution.diff(t).subs(t, 0), 1)
+]
+C_values = solve(conditions, symbols("C1, C2"))
+general_solution.subs(C_values)
+\end{lstlisting}
+Kodas naudotas pavaizduoti Koši sprendinį \eqref{eqs:cauchy-sol}
+\begin{lstlisting}[language=Python]
+import numpy as np
+import matplotlib.pyplot as plt
+def x(t):
+    return np.sin(t)/2 + np.cos(4*t)/7+np.sin(3*t)/6-np.cos(3*t)/7
+ts = np.linspace(0, 2 * np.pi, 100)
+title ="""Lygties $x''+9x=4\sin t-\cos 4t$ Koši sprendinys
+su pradinėmis sąlygomis $x(0)=0, x'(0)=1$"""
+plt.title(title)
+plt.plot(ts, x(ts), label='x(t)')
+plt.xlabel('$t$')
+plt.ylabel('$x(t)$')
+plt.legend()
+\end{lstlisting}
 \end{document}
 
