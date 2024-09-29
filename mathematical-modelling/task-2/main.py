@@ -78,9 +78,9 @@ us_4_double_tau = rk4(f, t_0, u_0, 2 * tau, N)
 error_3 = np.abs(us_3_double_tau[-1] - us_3[-1]) / (2**3 - 1)
 error_4 = np.abs(us_4_double_tau[-1] - us_4[-1]) / (2**4 - 1)
 
-label = f'$u_{{\\tau}}$ - 3-pakopis, $\\vert u({t_end})-u_{{{tau_i}}}({t_end})\\vert\\approx {error_3:.04f}$'
+label = f'$u_{{\\tau}}$ - 3-pakopis, $\\vert u({t_end})-u_{{{tau}}}({t_end})\\vert\\approx {error_3:.04f}$'
 plt.plot(ts, us_3, label=label)
-label = f'$u_{{\\tau}}$ - 4-pakopis, $\\vert u({t_end})-u_{{{tau_i}}}({t_end})\\vert\\approx {error_4:.04f}$'
+label = f'$u_{{\\tau}}$ - 4-pakopis, $\\vert u({t_end})-u_{{{tau}}}({t_end})\\vert\\approx {error_4:.04f}$'
 plt.plot(ts, us_4, label=label)
     
 plt.legend()
