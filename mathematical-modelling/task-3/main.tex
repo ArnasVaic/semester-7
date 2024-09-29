@@ -45,9 +45,9 @@ todėl galime formuoti charakteringąjį polinomą
     \lambda^2+9=0\implies\lambda=\pm3i
 \end{align*}
 Šiuo atveju bendrasis sprendinys $x_B(t)$ turės formą 
-\begin{align}
+\begin{align*}
 x_B(t)=C_1e^{3it}+C_2e^{-3it}
-\end{align}
+\end{align*}
 Nehomogeninę lygtį \eqref{eqs:nohom} spręsime
 konstantų variavimo metodu, todėl:
 \begin{align}
@@ -97,12 +97,12 @@ C_1(t)&=\frac{e^{-2it}}{6i}-\frac{e^{-4it}}{12i}+\frac{e^{it}}{12}-\frac{e^{-7it
 \begin{align}
 C_2'&=-e^{6it}C_1'\notag\\
 C_2'&=-e^{6it}\left(-\frac{e^{-2it}}{3}+\frac{e^{-4it}}{3}-\frac{e^{it}}{12i}-\frac{e^{-7it}}{12i}\right)\notag\\
-C_2'&=\frac{e^{4it}}{3}-\frac{e^{2it}}{3}+\frac{e^{7it}}{12i}+\frac{e^{-it}}{12i}\\
+C_2'&=\frac{e^{4it}}{3}-\frac{e^{2it}}{3}+\frac{e^{7it}}{12i}+\frac{e^{-it}}{12i}\notag\\
 C_2&=\int\left(\frac{e^{4it}}{3}-\frac{e^{2it}}{3}+\frac{e^{7it}}{12i}+\frac{e^{-it}}{12i}\right)dt\notag\\
 C_2&=\frac{1}{4i}\frac{e^{4it}}{3}-\frac{1}{2i}\frac{e^{2it}}{3}+\frac{1}{7i}\frac{e^{7it}}{12i}+\frac{1}{-i}\frac{e^{-it}}{12i}+\tilde{C_2}\notag\\
-C_2&=\frac{e^{4it}}{12i}-\frac{e^{2it}}{6i}-\frac{e^{7it}}{84}+\frac{e^{-it}}{12}+\tilde{C_2}
+C_2&=\frac{e^{4it}}{12i}-\frac{e^{2it}}{6i}-\frac{e^{7it}}{84}+\frac{e^{-it}}{12}+\tilde{C_2}\label{eqs:c2}
 \end{align}
-Nehomogeninės lygties sprendinys tada bus:
+Įstačius gautas $C_1$ ir $C_2$ išraiškas \eqref{eqs:c1} ir \eqref{eqs:c2} gauname nehomogeninės lygties sprendinį:
 \begin{align}
 x(t)&=\left(\frac{e^{-2it}}{6i}-\frac{e^{-4it}}{12i}+\frac{e^{it}}{12}-\frac{e^{-7it}}{84}+\tilde{C_1}\right)e^{3it}
 +\left(\frac{e^{4it}}{12i}-\frac{e^{2it}}{6i}-\frac{e^{7it}}{84}+\frac{e^{-it}}{12}+\tilde{C_2}\right)e^{-3it}\notag\\
@@ -145,12 +145,12 @@ už šio darbo apimties, todėl pateiktos reikšmės buvo rastos naudojant skait
 \max_{t\in[0,2\pi]}x(t)&\approx 0.537908854609837
 \end{align*}
 \section{Palyginimas su programos sprendiniu}
-Programa rasti lygties \eqref{eqs:nohom} sprendiniui buvo rašyta su python programavimo
+Programa rasti lygties \eqref{eqs:nohom} sprendiniui su pradinėmis sąlygomis \eqref{eqs:initial-1} bei \eqref{eqs:initial-2} buvo rašyta su python programavimo
 kalba bei sympy paketu. Programa rastas sprendinys
 \begin{align}
-x(t)=\frac{\sin(t)}{2}+\frac{\sin(3t)}{6}-\frac{\cos(3t)}{7}+\frac{\cos(4t)}{7}
+x(t)=\frac{\sin(t)}{2}+\frac{\sin(3t)}{6}-\frac{\cos(3t)}{7}+\frac{\cos(4t)}{7}\label{eqs:program-sol}
 \end{align}
-Yra akivaizdu, kad analitiškai ir programa gauti sprendiniai yra ekvivalentūs.
+Yra akivaizdu, kad analitiškai \eqref{eqs:cauchy-sol} ir programa \eqref{eqs:program-sol} gauti sprendiniai yra ekvivalentūs.
 \section{Sprendinio grafikas}
 \begin{figure}[h!]
 \centering
