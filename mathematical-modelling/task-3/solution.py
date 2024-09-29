@@ -11,3 +11,5 @@ conditions = [
 ]
 C_values = solve(conditions, symbols("C1, C2"))
 general_solution.subs(C_values)
+
+# %%
