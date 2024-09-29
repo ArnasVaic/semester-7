@@ -127,15 +127,30 @@ x'(0)=1\\
 Koši sprendinys:
 \begin{align}
 x(t)&=\frac{\sin(t)}{2}+\frac{\cos(4t)}{7}+\frac{\sin(3t)}{6}-\frac{\cos(3t)}{7}\label{eqs:cauchy-sol}
-\end{align}
+\end{align} 
+Kai $t\to+\infty$ sprendinys $x(t)$ nekonverguoja, nes trigonometrinių funkcijų svyravimas 
+nėra slopinamas, t.y. riba neegzistuoja.
+$$\lim_{t\to+\infty}x(t)=DNE$$
+Koši sprendinio svyravimų periodą galima rasti pažvelgus į individualiu sprendinio dėmenų svyravimo periodus.
+\begin{align*}
+\sin(t)\implies T=\frac{2\pi}{1}=2\pi\\
+\sin(3t)\implies T=\frac{2\pi}{3}\\
+\cos(3t)\implies T=\frac{2\pi}{3}\\
+\cos(4t)\implies T=\frac{2\pi}{4}=\frac{\pi}{2}
+\end{align*}
+Individualių sprendinio dėmenų svyravimų periodų mažiausias bendras kartotinis yra $2\pi$, todėl ir $x(t)$ svyravimo periodas yra $T=2\pi$. Analitinis sprendinio amplitudės radimas yra
+už šio darbo apimties, todėl pateiktos reikšmės buvo rastos naudojant skaitinius metodus.
+\begin{align*}
+\min_{t\in[0,2\pi]}x(t)&\approx -0.7252871753033927\\
+\max_{t\in[0,2\pi]}x(t)&\approx 0.537908854609837
+\end{align*}
 \section{Palyginimas su programos sprendiniu}
 Programa rasti lygties \eqref{eqs:nohom} sprendiniui buvo rašyta su python programavimo
 kalba bei sympy paketu. Programa rastas sprendinys
 \begin{align}
 x(t)=\frac{\sin(t)}{2}+\frac{\sin(3t)}{6}-\frac{\cos(3t)}{7}+\frac{\cos(4t)}{7}
 \end{align}
-Yra akivaizdu, kad analitiškai ir programa gauti sprendiniai yra ekvivalentūs
-\newpage
+Yra akivaizdu, kad analitiškai ir programa gauti sprendiniai yra ekvivalentūs.
 \section{Sprendinio grafikas}
 \begin{figure}[h!]
 \centering
@@ -158,6 +173,7 @@ conditions = [
 C_values = solve(conditions, symbols("C1, C2"))
 general_solution.subs(C_values)
 \end{lstlisting}
+\newpage
 Kodas naudotas pavaizduoti Koši sprendinį \eqref{eqs:cauchy-sol}
 \begin{lstlisting}[language=Python]
 import numpy as np
@@ -172,6 +188,15 @@ plt.plot(ts, x(ts), label='x(t)')
 plt.xlabel('$t$')
 plt.ylabel('$x(t)$')
 plt.legend()
+\end{lstlisting}
+Kodas naudotas rasti Koši sprendinio \eqref{eqs:cauchy-sol} svyravimo amplitudę
+\begin{lstlisting}[language=Python]
+import numpy as np
+def x(t):
+    return np.sin(t)/2 + np.cos(4*t)/7+np.sin(3*t)/6-np.cos(3*t)/7
+ts = np.linspace(0, 2 * np.pi, 1000)
+xs = x(ts)
+np.min(xs), np.max(xs)
 \end{lstlisting}
 \end{document}
 
