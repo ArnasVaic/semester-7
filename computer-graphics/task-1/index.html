@@ -1,33 +1,44 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js"
-            integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
-        ></script>
-		<script type="module" src="script.js"></script>
-        <style>
-            html {
-                height: 100%;
-            }
+  <head>
+    <meta charset="utf-8" />
+    <title>Pirmas namų darbas</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        margin: 0;
+        height: 100vh;
+      }
 
-            body {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin: 0;
-                width: 100%;
-                height: 100%;
-            }
-        </style>
-        <title>Laboratorinis 1</title>
-    </head>
-    <body>
-        <div style="display: flex; align-items: center; justify-content: center;">
-            <canvas id="canvas" width="512" height="512"></canvas>
-        </div>
-    </body>
+      .title {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+      }
+
+      p,
+      h1 {
+        margin: 0.5rem;
+      }
+
+      ul {
+        padding-left: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="title">
+      <h1>Pirmas laboratorinis darbas</h1>
+      <p>Arnas Vaicekauskas</p>
+    </div>
+    <div>
+      <ul>
+        <li><a href="a.html">A dalis</a></li>
+        <li><a href="b.html">B dalis</a></li>
+      </ul>
+    </div>
+  </body>
 </html>
