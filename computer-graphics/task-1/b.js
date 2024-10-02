@@ -6,10 +6,10 @@ $(function() {
 
   const FIGURE_LENGTH = 4;
   const FIGURE_MASK = [
-    [1, 0, 0, 1],
+    [1, 1, 1, 1],
     [1, 1, 1, 1],
     [0, 0, 1, 1],
-    [0, 0, 1, 0],
+    [0, 0, 1, 1],
   ];
 
   console.assert(FIGURE_LENGTH == FIGURE_MASK.length);
