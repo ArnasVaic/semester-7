@@ -26,23 +26,12 @@ $$\tilde{S}_{max}=\lim_{p\to\infty}\frac{1}{\alpha+\frac{\beta}{p}}=\frac{1}{\al
 
 ## Pirma dalis
 
-Nuoseklioji dalis - duomenų įkėlimas ir atstumų matricos skaičiavimas.
-Lygiagretinama dalis - sprendinių perrinkimas.
+![Plot 1](./plot-1.png)
 
-### Eksperimento duomenys
+Čia $p$ - procesorių skaičius, $t(p)$ - eksperimentiniu būdu išmatuotas visos programos veikimo laikas, $t_2(p)$ - eksperimentiniu būdu išmatuotas sprendinio paieškos laikas, $\tilde{S}_p$ - teorinis programos veikimo laiko pagreitėjimas.
 
-Duomenys gauti su dvejais procesoriais ($p=2$)
+## Antra dalis
 
-|     | Matricos skaičiavimas | sprendimo paieškos |
-| --- | --------------------- | ------------------ |
-| 1   | 4.43                  | 8.47               |
-| 2   | 4.48                  | 8.81               |
-| 3   | 4.69                  | 8.31               |
+![Plot 2](./plot-2.png)
 
-Duomenys gauti su keturiais procesoriais ($p=4$)
-
-|     | Matricos skaičiavimas | sprendimo paieškos |
-| --- | --------------------- | ------------------ |
-| 1   | 4.45                  | 4.16               |
-| 2   | 4.55                  | 4.16               |
-| 3   | 4.46                  | 4.24               |
+Čia $t_1(p)$ - eksperimentiniu būdu išmatuotas atstumų matricos sudarymo laikas.

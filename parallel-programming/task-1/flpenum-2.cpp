@@ -4,13 +4,13 @@
 #include <sys/time.h>
 #include <omp.h>
 
-#define NUM_OF_THREADS 1
+#define NUM_OF_THREADS 4
 
 using namespace std;
 
 //===== Globalus kintamieji ===================================================
 
-int numDP = 5500; // Vietoviu skaicius (demand points, max 10000)
+int numDP = 5000; // Vietoviu skaicius (demand points, max 10000)
 int numPF = 5;	  // Esanciu objektu skaicius (preexisting facilities)
 int numCL = 50;	  // Kandidatu naujiems objektams skaicius (candidate locations)
 int numX = 3;	  // Nauju objektu skaicius
@@ -42,12 +42,19 @@ int main()
 
 	//----- Atstumu matricos skaiciavimas -------------------------------------
 	distanceMatrix = new double *[numDP];
-	for (int i = 0; i < numDP; i++)
+	#pragma omp parallel
 	{
-		distanceMatrix[i] = new double[i + 1];
-		for (int j = 0; j <= i; j++)
+		#pragma omp single
+		for (int i = 0; i < numDP; i++)
 		{
-			distanceMatrix[i][j] = HaversineDistance(demandPoints[i][0], demandPoints[i][1], demandPoints[j][0], demandPoints[j][1]);
+			#pragma omp task firstprivate(i) shared(distanceMatrix, demandPoints)
+			{
+				distanceMatrix[i] = new double[i + 1];
+				for (int j = 0; j <= i; j++)
+				{
+					distanceMatrix[i][j] = HaversineDistance(demandPoints[i][0], demandPoints[i][1], demandPoints[j][0], demandPoints[j][1]);
+				}
+			}
 		}
 	}
 	double t_matrix = getTime();
@@ -80,7 +87,7 @@ int main()
 			}	
 		}
 	}
-	
+
 	//----- Rezultatu spausdinimas --------------------------------------------
 	double t_finish = getTime(); // Skaiciavimu pabaigos laikas
 	cout << "Sprendinio paieskos trukme: " << t_finish - t_matrix << endl;
