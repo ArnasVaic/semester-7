@@ -10,19 +10,15 @@
 
 ### Teorinio pagreitėjimo vertinimas
 
-tekstas
-
 $$
 \begin{align}
-\alpha&\approx 0.2367\\
-\beta&\approx 0.7632\\
-\tilde{S}_2&=\frac{1}{\alpha+\frac{\beta}{2}}\approx 1.6171\\
-\tilde{S}_4&=\frac{1}{\alpha+\frac{\beta}{4}}\approx 2.3389\\
-\tilde{S}_{max}&=\lim_{p\to\infty}\frac{1}{\alpha+\frac{\beta}{p}}=\frac{1}{\alpha}\approx 4.2241\\
+\alpha\approx 0.2367\\
+\beta\approx 0.7632\\
+\tilde{S}_2=\frac{1}{\alpha+\frac{\beta}{2}}\approx 1.6171\\
+\tilde{S}_4=\frac{1}{\alpha+\frac{\beta}{4}}\approx 2.3389\\
+\tilde{S}_{max}=\lim_{p\to\infty}\frac{1}{\alpha+\frac{\beta}{p}}=\frac{1}{\alpha}\approx 4.2241\\
 \end{align}
 $$
-
-tekstas
 
 ## Bendros atminties lygiagrečiojo algoritmo sudarymas
 
