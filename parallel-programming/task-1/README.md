@@ -10,6 +10,8 @@
 
 ### Teorinio pagreitėjimo vertinimas
 
+tekstas
+
 $$
 \begin{align}
 \alpha&\approx 0.2367\\
@@ -19,6 +21,8 @@ $$
 \tilde{S}_{max}&=\lim_{p\to\infty}\frac{1}{\alpha+\frac{\beta}{p}}=\frac{1}{\alpha}\approx 4.2241\\
 \end{align}
 $$
+
+tekstas
 
 ## Bendros atminties lygiagrečiojo algoritmo sudarymas
 
