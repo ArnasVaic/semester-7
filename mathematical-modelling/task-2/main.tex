@@ -160,9 +160,6 @@ fig, axes = plt.subplots(2, sharey=True)
 
 fig.suptitle("")
 
-plt.xlabel("")
-plt.ylabel("")
-
 for index, tau in enumerate([0.1, 0.05]):
 
     N = int((x_end - x_0) / tau) + 1
@@ -179,9 +176,11 @@ for index, tau in enumerate([0.1, 0.05]):
 
     axes[index].set_xlim((-0.05, x_end+0.05))
 
+    axes[index].set_xlabel('$x$')
+    axes[index].set_ylabel('$u$')
     axes[index].legend()
 
-fig.subplots_adjust(wspace=0.2)
+fig.subplots_adjust(hspace=0.3)
 
 plt.show()
 \end{lstlisting}
