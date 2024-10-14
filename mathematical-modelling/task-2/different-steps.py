@@ -15,9 +15,6 @@ fig, axes = plt.subplots(2, sharey=True)
 
 fig.suptitle(f'Lygties $u\' =x+2x^2\\sin u$ su pradine sąlyga $u({x_0})={u_0}$ sprendinys\ngautas pritaikius 4-pakopį Rungės-Kuto metodą')
 
-plt.xlabel('$x$')
-plt.ylabel('$u$')
-
 for index, tau in enumerate([0.1, 0.05]):
 
     N = int((x_end - x_0) / tau) + 1
@@ -36,9 +33,11 @@ for index, tau in enumerate([0.1, 0.05]):
 
     axes[index].set_xlim((-0.05, x_end+0.05))
 
+    axes[index].set_xlabel('$x$')
+    axes[index].set_ylabel('$u$')
     axes[index].legend()
 
-fig.subplots_adjust(wspace=0.2)
+fig.subplots_adjust(hspace=0.3)
 
 plt.show()
 # %%
