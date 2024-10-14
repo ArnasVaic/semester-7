@@ -9,7 +9,7 @@ def rk3(f, t_0, y_0, tau, N):
         k2 = f(ts[i] + tau, ys[i] + tau * k1)
         k3 = f(ts[i] + tau/2, ys[i] + tau/2 * (k1 + k2)/2 )
         ys[i + 1] = ys[i] + tau/6 * (k1 + k2 + 4*k3)
-    return ys
+    return ts, ys
 
 def rk4(f, t_0, y_0, tau, N):
     ts = np.linspace(t_0, t_0 + (N - 1) * tau, N)

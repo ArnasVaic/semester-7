@@ -109,116 +109,168 @@ Rungės metodas paklaidai įvertinti
 \newpage
 \section{Priedai}
 
-Programos kodas naudotas sugeneruoti visus šiame dokumente esančius grafikus. Kode naudojamos antraštės išimtos, nes
-netelpa dokumente ir LaTeX kompiliatorius nesugeba sukompiliuoti simbolių eilučių, kuriose yra LaTeX kodo. 
+Programos kodas naudotas sugeneruoti visus šiame dokumente esančius grafikus.
+
+\subsection{solver.py}
+
+\begin{lstlisting}[language=Python]
+import numpy as np
+
+def rk3(f, t_0, y_0, tau, N):
+    ts = np.linspace(t_0, t_0 + (N - 1) * tau, N)
+    ys = np.zeros(N)
+    ys[0] = y_0
+    for i in range(N - 1):
+        k1 = f(ts[i], ys[i])
+        k2 = f(ts[i] + tau, ys[i] + tau * k1)
+        k3 = f(ts[i] + tau/2, ys[i] + tau/2 * (k1 + k2)/2 )
+        ys[i + 1] = ys[i] + tau/6 * (k1 + k2 + 4*k3)
+    return ts, ys
+
+def rk4(f, t_0, y_0, tau, N):
+    ts = np.linspace(t_0, t_0 + (N - 1) * tau, N)
+    ys = np.zeros(N)
+    ys[0] = y_0
+    for i in range(N - 1):
+        k1 = f(ts[i], ys[i])
+        k2 = f(ts[i] + tau/2, ys[i] + tau/2 * k1)
+        k3 = f(ts[i] + tau/2, ys[i] + tau/2 * k2)
+        k4 = f(ts[i] + tau, ys[i] + tau * k3)
+        ys[i + 1] = ys[i] + tau/6 * (k1 + 2*k2 + 2*k3 + k4)
+    return ts, ys
+\end{lstlisting}
+
+\newpage
+\subsection{different-steps.py}
 
 \begin{lstlisting}[language=Python]
 import numpy as np
 from scipy.integrate import odeint
 import matplotlib.pyplot as plt
-
-def rk3(f, t_0, y_0, tau, N):
-    t_current = t_0
-    y_current = y_0
-
-    ys = np.zeros(N)
-
-    for i in range(N):
-        k1 = f(t_current, y_current)
-        k2 = f(t_current + tau, y_current + tau * k1)
-        k3 = f(t_current + tau/2, y_current + tau/2 * (k1 + k2)/2 )
-        
-        t_current = t_current + tau
-        y_current = y_current + tau/6 * (k1 + k2 + 4*k3)
-        ys[i] = y_current
-    return ys
-
-def rk4(f, t_0, y_0, tau, N):
-
-    t_current = t_0
-    y_current = y_0
-
-    ys = np.zeros(N)
-
-    for i in range(N):
-        k1 = f(t_current, y_current)
-        k2 = f(t_current + tau/2, y_current + tau/2 * k1)
-        k3 = f(t_current + tau/2, y_current + tau/2 * k2)
-        k4 = f(t_current + tau, y_current + tau * k3)
-
-        t_current = t_current + tau
-        y_current = y_current + tau/6 * (k1 + 2*k2 + 2*k3 + k4)
-        ys[i] = y_current
-    return ys
+from solver import rk3, rk4
 
 def f(t, u):
-    return t + 2 * t**2 * np.sin(u)
+    return t + 2 * t ** 2 * np.sin(u)
 
 u_0 = -1
 x_0 = 0
 x_end = 1
-tau = [0.1, 0.05]
-
-plt.xlabel('$x$')
-plt.ylabel('$u$')
 
 fig, axes = plt.subplots(2, sharey=True)
 
-for index, tau_i in enumerate(tau):
-    if index == 0:
-        axes[index].set_title("")
-    N = int((x_end - x_0) / tau_i)
-    xs = np.linspace(x_0, 1, N)
-    us = rk4(f, x_0, u_0, tau_i, N)
-    us_real = odeint(lambda u, t: f(t, u), u_0, xs)
-    axes[index].plot(xs, us_real,label="", linestyle='dashed')
-    us_double_tau = rk4(f, x_0, u_0, 2 * tau_i, N)
-    error = np.abs(us_double_tau[-1] - us[-1]) / (2**4 - 1)
-    label = ""
-    axes[index].plot(xs, us, label=label)
+fig.suptitle("")
+
+plt.xlabel("")
+plt.ylabel("")
+
+for index, tau in enumerate([0.1, 0.05]):
+
+    N = int((x_end - x_0) / tau) + 1
+    M = int((x_end - x_0) / (2 * tau)) + 1
+
+    xs, us = rk4(f, x_0, u_0, tau, N)
+
+    _, us_2tau = rk4(f, x_0, u_0, 2 * tau, M)
+    error = np.abs(us_2tau[-1] - us[-1]) / (2**4 - 1)
+    axes[index].plot(xs, us, label="", color='red')
+
+    us_real = odeint(f, u_0, xs, tfirst=True)
+    axes[index].plot(xs, us_real,label="", linestyle='dotted', color='blue')
+
+    axes[index].set_xlim((-0.05, x_end+0.05))
+
     axes[index].legend()
-plt.show()
 
-tau = 0.1
+fig.subplots_adjust(wspace=0.2)
+
+plt.show()
+\end{lstlisting}
+
+\newpage
+\subsection{different-method.py}
+
+\begin{lstlisting}[language=Python]
+import numpy as np
+from scipy.integrate import odeint
+import matplotlib.pyplot as plt
+from solver import rk3, rk4
+
+def f(t, u):
+    return t + 2 * t ** 2 * np.sin(u)
+
+u_0 = -1
+x_0 = 0
+x_end = 1
+tau = 0.05
+
 plt.title("")
+
 plt.xlabel("")
 plt.ylabel("")
 
-N = int((x_end - x_0) / tau)
-xs = np.linspace(x_0, 1, N)
+N = int((x_end - x_0) / tau) + 1
+M = int((x_end - x_0) / (2 * tau)) + 1
 
-us_3 = rk3(f, x_0, u_0, tau, N)
-us_4 = rk4(f, x_0, u_0, tau, N)
+xs, us_3 = rk3(f, x_0, u_0, tau, N)
 
-us_3_double_tau = rk3(f, x_0, u_0, 2 * tau, N)
-us_4_double_tau = rk4(f, x_0, u_0, 2 * tau, N)
+us_real = odeint(f, u_0, xs, tfirst=True)
+plt.plot(xs, us_real,label="", linewidth=4, color='green')
 
-error_3_global = np.abs(us_3_double_tau[-1] - us_3[-1]) / (2**3 - 1)
-error_4_global = np.abs(us_4_double_tau[-1] - us_4[-1]) / (2**4 - 1)
+_, us_3_2tau = rk3(f, x_0, u_0, 2 * tau, M)
+error_3_global = np.abs(us_3_2tau[-1] - us_3[-1]) / (2**3 - 1)
+plt.plot(xs, us_3, label="", marker='D', color='red')
 
-label = ""
-plt.plot(xs, us_3, label=label)
+_, us_4 = rk4(f, x_0, u_0, tau, N)
+_, us_4_2tau = rk4(f, x_0, u_0, 2 * tau, M)
+error_4_global = np.abs(us_4_2tau[-1] - us_4[-1]) / (2**4 - 1)
+plt.plot(xs, us_4, label="", marker='x', color='yellow')
 
-label = ""
-plt.plot(xs, us_4, label=label, linestyle='dashed')
-    
-us_real = odeint(lambda u, t: f(t, u), u_0, xs)
-plt.plot(xs, us_real,label="", linestyle='dashed')
+plt.gca().set_xlim((-0.05, x_end+0.05))
 
 plt.legend()
 plt.show()
-    
-error_3_local = np.abs(us_3_double_tau - us_3) / (2**3 - 1)
-error_4_local = np.abs(us_4_double_tau - us_4) / (2**4 - 1)
+\end{lstlisting}
+
+\newpage
+\subsection{error.py}
+
+\begin{lstlisting}[language=Python]
+import numpy as np
+from scipy.integrate import odeint
+import matplotlib.pyplot as plt
+from solver import rk3, rk4
+
+def f(t, u):
+    return t + 2 * t ** 2 * np.sin(u)
+
+u_0 = -1
+x_0 = 0
+x_end = 1
+tau = 0.05
+
+N = int((x_end - x_0) / tau) + 1
+M = int((x_end - x_0) / (2 * tau)) + 1
+
+_, us_3 = rk3(f, x_0, u_0, tau, N)
+xs, us_3_2tau = rk3(f, x_0, u_0, 2 * tau, M)
+
+_, us_4 = rk4(f, x_0, u_0, tau, N)
+_, us_4_2tau = rk4(f, x_0, u_0, 2 * tau, M)
+
+error_rk3 = np.abs(us_3_2tau - us_3[::2]) / (2**3 - 1)
+error_rk4 = np.abs(us_4_2tau - us_4[::2]) / (2**4 - 1)
 
 plt.title("")
-label = ""
-plt.plot(xs, error_3_local, label=label)
-label = ""
-plt.plot(xs, error_4_local, label=label)
+
+plt.plot(xs, error_rk3, label="")
+plt.plot(xs, error_rk4, label="")
 plt.legend()
 plt.xlabel("")
 plt.ylabel("")
+
+plt.gca().set_ylim((0, 0.00001))
+plt.gca().set_xlim((-0.05, x_end+0.05))
+
 plt.show()
 \end{lstlisting}
 
