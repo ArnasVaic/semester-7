@@ -2,9 +2,9 @@
 #include <cmath>
 #include <time.h>
 #include <sys/time.h>
-// #include <omp.h>
+#include <omp.h>
 
-#define NUM_OF_THREADS 2
+#define NUM_OF_THREADS 4
 
 using namespace std;
 
@@ -35,20 +35,26 @@ int increaseX(int *X, int index, int maxindex);
 
 int main()
 {
-
-	// omp_set_num_threads(1);
+	omp_set_num_threads(NUM_OF_THREADS);
 
 	loadDemandPoints();			// Duomenu nuskaitymas is failo
 	double t_start = getTime(); // Algoritmo vykdymo pradzios laikas
 
 	//----- Atstumu matricos skaiciavimas -------------------------------------
 	distanceMatrix = new double *[numDP];
-	for (int i = 0; i < numDP; i++)
+	#pragma omp parallel
 	{
-		distanceMatrix[i] = new double[i + 1];
-		for (int j = 0; j <= i; j++)
+		#pragma omp single
+		for (int i = 0; i < numDP; i++)
 		{
-			distanceMatrix[i][j] = HaversineDistance(demandPoints[i][0], demandPoints[i][1], demandPoints[j][0], demandPoints[j][1]);
+			#pragma omp task firstprivate(i) shared(distanceMatrix, demandPoints)
+			{
+				distanceMatrix[i] = new double[i + 1];
+				for (int j = 0; j <= i; j++)
+				{
+					distanceMatrix[i][j] = HaversineDistance(demandPoints[i][0], demandPoints[i][1], demandPoints[j][0], demandPoints[j][1]);
+				}
+			}
 		}
 	}
 	double t_matrix = getTime();
@@ -64,14 +70,21 @@ int main()
 	bestU = u;				 // Geriausio sprendinio sprendinio naudingumas
 
 	//----- Visų galimų sprendinių perrinkimas --------------------------------
-	while (increaseX(X, numX - 1, numCL) == true)
+	#pragma omp parallel
 	{
-		u = evaluateSolution(X);
-		if (u > bestU)
+		while (increaseX(X, numX - 1, numCL) == true)
 		{
-			bestU = u;
-			for (int i = 0; i < numX; i++)
-				bestX[i] = X[i];
+			u = evaluateSolution(X);
+
+			#pragma omp critical
+			{
+				if (u > bestU)
+				{
+					bestU = u;
+					for (int i = 0; i < numX; i++)
+						bestX[i] = X[i];
+				}
+			}	
 		}
 	}
 
@@ -140,7 +153,6 @@ double evaluateSolution(int *X)
 	int bestPF;
 	int bestX;
 	double d;
-	// #pragma omp parallel for reduction(+:U, totalU) num_threads(NUM_OF_THREADS) shared(demandPoints, X, numPF, numDP, numX) private(bestPF, bestX, d) schedule(static)
 	for (int i = 0; i < numDP; i++)
 	{
 		totalU += demandPoints[i][2];
