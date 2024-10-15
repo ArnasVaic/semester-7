@@ -6,7 +6,7 @@
 
 | numDP | numCL |
 | :---: | :---: |
-| 5000  |  50   |
+| 5000  |  55   |
 
 ### Teorinio pagreitėjimo vertinimas
 

@@ -2,17 +2,14 @@
 #include <cmath>
 #include <time.h>
 #include <sys/time.h>
-// #include <omp.h>
-
-#define NUM_OF_THREADS 2
 
 using namespace std;
 
 //===== Globalus kintamieji ===================================================
 
-int numDP = 5500; // Vietoviu skaicius (demand points, max 10000)
+int numDP = 5000; // Vietoviu skaicius (demand points, max 10000)
 int numPF = 5;	  // Esanciu objektu skaicius (preexisting facilities)
-int numCL = 50;	  // Kandidatu naujiems objektams skaicius (candidate locations)
+int numCL = 55;	  // Kandidatu naujiems objektams skaicius (candidate locations)
 int numX = 3;	  // Nauju objektu skaicius
 
 double **demandPoints;	 // Geografiniai duomenys
@@ -35,8 +32,6 @@ int increaseX(int *X, int index, int maxindex);
 
 int main()
 {
-
-	// omp_set_num_threads(1);
 
 	loadDemandPoints();			// Duomenu nuskaitymas is failo
 	double t_start = getTime(); // Algoritmo vykdymo pradzios laikas
@@ -140,7 +135,6 @@ double evaluateSolution(int *X)
 	int bestPF;
 	int bestX;
 	double d;
-	// #pragma omp parallel for reduction(+:U, totalU) num_threads(NUM_OF_THREADS) shared(demandPoints, X, numPF, numDP, numX) private(bestPF, bestX, d) schedule(static)
 	for (int i = 0; i < numDP; i++)
 	{
 		totalU += demandPoints[i][2];

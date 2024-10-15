@@ -10,9 +10,9 @@ using namespace std;
 
 //===== Globalus kintamieji ===================================================
 
-int numDP = 5500; // Vietoviu skaicius (demand points, max 10000)
+int numDP = 5000; // Vietoviu skaicius (demand points, max 10000)
 int numPF = 5;	  // Esanciu objektu skaicius (preexisting facilities)
-int numCL = 50;	  // Kandidatu naujiems objektams skaicius (candidate locations)
+int numCL = 55;	  // Kandidatu naujiems objektams skaicius (candidate locations)
 int numX = 3;	  // Nauju objektu skaicius
 
 double **demandPoints;	 // Geografiniai duomenys
