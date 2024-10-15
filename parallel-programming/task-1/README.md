@@ -77,9 +77,25 @@ Kadangi išorinis ciklas keičia masyvą `X` - jo lygiagretinti negalime iš esm
 
 ### Algoritmo sudarymas
 
-Galime pastebėti, kad kiekviena matricos eilutė yra inicializuojama individualiai, todėl darbą būtų galima padalinti kelioms gijoms, tačiau yra problema - kiekviena matricos eilutė yra vienu nariu ilgesnė nei praeita, jei tolygiai paskirstytume eilutes kelioms gijoms - jū darbas būtų labai nevienodas, todėl šioje situacijoje geriau naudoti `omp` užduotis.
+Galime pastebėti, kad kiekviena matricos eilutė yra inicializuojama individualiai, todėl darbą būtų galima padalinti kelioms gijoms, tačiau yra problema - kiekviena matricos eilutė yra vienu nariu ilgesnė nei praeita, jei tolygiai paskirstytume eilutes kelioms gijoms - jū darbas būtų labai nevienodas, todėl šioje situacijoje geriau naudoti `omp` užduotis. Kaip ir praeitame pavizdyje, užduotis kuria tik viena gija, o kitos gijos jas vykdo.
 
 ```c++
+distanceMatrix = new double *[numDP];
+#pragma omp parallel
+{
+    #pragma omp single
+    for (int i = 0; i < numDP; i++)
+    {
+        #pragma omp task firstprivate(i) shared(distanceMatrix, demandPoints)
+        {
+            distanceMatrix[i] = new double[i + 1];
+            for (int j = 0; j <= i; j++)
+            {
+                distanceMatrix[i][j] = HaversineDistance(demandPoints[i][0], demandPoints[i][1], demandPoints[j][0], demandPoints[j][1]);
+            }
+        }
+    }
+}
 ```
 
 ![Plot 2](./plot-2.png)
