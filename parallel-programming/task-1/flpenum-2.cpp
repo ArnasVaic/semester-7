@@ -3,6 +3,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include <omp.h>
+#include <cstring>
 
 #define NUM_OF_THREADS 4
 
@@ -72,19 +73,28 @@ int main()
 	//----- Visų galimų sprendinių perrinkimas --------------------------------
 	#pragma omp parallel
 	{
-		while (increaseX(X, numX - 1, numCL) == true)
+		#pragma omp single
 		{
-			u = evaluateSolution(X);
-
-			#pragma omp critical
+			while (increaseX(X, numX - 1, numCL) == true)
 			{
-				if (u > bestU)
+				int threadLocalX[numX];
+				memcpy(threadLocalX, X, sizeof(threadLocalX));
+
+				#pragma omp task firstprivate(threadLocalX) private(u) shared(bestU, bestX, numX)
 				{
-					bestU = u;
-					for (int i = 0; i < numX; i++)
-						bestX[i] = X[i];
+					u = evaluateSolution(X);
+
+					#pragma omp critical
+					{
+						if (u > bestU)
+						{
+							bestU = u;
+							for (int i = 0; i < numX; i++)
+								bestX[i] = threadLocalX[i];
+						}
+					}	
 				}
-			}	
+			}
 		}
 	}
 

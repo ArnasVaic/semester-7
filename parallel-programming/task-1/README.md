@@ -26,6 +26,8 @@
 
 ## Bendros atminties lygiagrečiojo algoritmo sudarymas
 
+Visų sprendinių perrinkimas
+
 ## Pirma dalis
 
 ![Plot 1](./plot-1.png)
