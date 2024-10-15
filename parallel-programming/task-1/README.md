@@ -8,6 +8,10 @@
 | :---: | :---: |
 | 5000  |  55   |
 
+| $\overline{t_1}(1)$ | $\overline{t_2}(1)$ |
+| :------------: | :------------: |
+|     4.2506     |    19.9500     |
+
 ### Teorinio pagreitėjimo vertinimas
 
 ```math
