@@ -6,5 +6,8 @@
         "dsolve",
         "polinomą",
         "sympy"
-    ]
+    ],
+    "files.associations": {
+        "iostream": "cpp"
+    }
 }
