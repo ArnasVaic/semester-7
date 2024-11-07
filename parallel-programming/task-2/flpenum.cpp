@@ -4,6 +4,7 @@
 #include <sys/time.h>
 #include <mpi.h>
 #include <cstddef>
+#include <assert.h>
 
 using namespace std;
 
@@ -16,10 +17,12 @@ struct demand_point_t
 
 //===== Globalus kintamieji ===================================================
 
-int numDP = 5000; // Vietoviu skaicius (demand points, max 10000)
-int numPF = 5;	  // Esanciu objektu skaicius (preexisting facilities)
-int numCL = 55;	  // Kandidatu naujiems objektams skaicius (candidate locations)
-int numX = 3;	  // Nauju objektu skaicius
+// initial config: 5000, 5, 55, 3
+
+int numDP = 4; // Vietoviu skaicius (demand points, max 10000)
+int numPF = 1;	  // Esanciu objektu skaicius (preexisting facilities)
+int numCL = 1;	  // Kandidatu naujiems objektams skaicius (candidate locations)
+int numX = 1;	  // Nauju objektu skaicius
 
 demand_point_t *demandPoints = new demand_point_t[numDP];	 // Geografiniai duomenys
 double **distanceMatrix; // Masyvas atstumu matricai saugoti
@@ -32,7 +35,7 @@ double u, bestU;			// Naujo sprendinio ir geriausio sprendinio naudingumas (util
 
 double getTime();
 void loadDemandPoints();
-double HaversineDistance(double lat1, double lon1, double lat2, double lon2);
+double HaversineDistance(demand_point_t const& p1, demand_point_t const& p2);
 double HaversineDistance(int i, int j);
 double evaluateSolution(int *X);
 int increaseX(int *X, int index, int maxindex);
@@ -76,19 +79,151 @@ int main()
 	double t_start = getTime(); // Algoritmo vykdymo pradzios laikas
 
 	//----- Atstumu matricos skaiciavimas -------------------------------------
-	distanceMatrix = new double *[numDP];
-	for (int i = 0; i < numDP; i++)
+	if ( 0 == world_rank )
 	{
-		distanceMatrix[i] = new double[i + 1];
-		for (int j = 0; j <= i; j++)
+		// Only master process needs the entire matrix
+		// when gathering results it will initialize each line
+		distanceMatrix = new double *[numDP];
+	}
+
+	// Each process will calculate multiple pairs of lines of this distance matrix
+	// To keep the work balanced the matrix lines will come in pairs -
+	// one line from the top and one from the bottom, this way there will
+	// be a need to process n + 1 elements for each unit of work.
+
+	// world size: p
+	// element number: n
+	// matrix size: n(n + 1)/2
+	// pairs per process: ceil(n / (2 * p)) note: last process may have to process less pairs if it happens so that n is not divisible by 2 * p
+	// elements per unit: n + 1 
+	assert( 0 == numDP % 2 );
+
+	const int stride = ceil(numDP / (2.0f * world_size));
+	const int start = world_rank * stride;
+	const int end = min(stride * ( 1 + world_rank ), numDP / 2);
+	const int pairs_cnt = end - start + 1;
+
+	// each process calculates (n + 1) * pairs_cnt values
+	const int result_cnt = pairs_cnt * (numDP + 1);
+	double *local_result = new double[result_cnt];
+
+	if ( 0 == world_rank )
+	{
+		cout << "common params:\n";
+		cout << "stride: " << stride << "\n";
+	} 
+
+	cout << "[rank=" << world_rank << "] " 
+		<< "range: [" << start << "-" << end << "]"
+		<< ", pairs: " << pairs_cnt
+		<< '\n';
+
+	// Iterate through pairs
+	for ( int pair_index = start; pair_index < end; ++pair_index )
+	{
+		demand_point_t const& p1 = demandPoints[pair_index];
+
+		// store two lines in one aray side by side
+
+		// From:
+		// l1 = start + 1
+		// ┌───┐
+		// 0..l1 <- distance matrix values for row=start
+		// ...
+		// 0.....l2 <- distance matrix values for row=n+1-start
+		// └──────┘
+		// l2 = n + 1 - l1 = n - start
+
+		// To:
+		// l = l1 + l2 = n + 1
+		// ┌───────────┐
+		// 0..l10.....l2 <- both stored in one array side by side
+		
+		// And all these pairs will be stored side by side inside 
+		// result and are of the same length: n + 1 for each pair
+		// result:
+		// pair_index=0 pair_index=1 pair_index=2
+		// v            v            v
+ 		// ┌───────────┐┌───────────┐┌───────────┐
+		// 0..l10.....l20..l10.....l20..l10.....l2
+		//              │    │
+		//              └ pair_offset = pair_index * (n + 1) = shorter_offset
+		//                   └ longer_offset = pair_index * (n + 1) + pair_index
+		//                   
+
+		const int pair_offset = pair_index * (numDP + 1);
+
+		// Evaluate shorter line
+
+		// writeable slice of shorter array
+		const int shorter_cnt = pair_index + 1;
+		double *shorter = &local_result[pair_offset];
+		for ( int j = 0; j < shorter_cnt; ++j )
 		{
-			distanceMatrix[i][j] = HaversineDistance(
-                demandPoints[i].latitude, 
-                demandPoints[i].longitude, 
-                demandPoints[j].latitude, 
-                demandPoints[j].longitude);
+			demand_point_t const& p2 = demandPoints[j];
+			shorter[j] = HaversineDistance(p1, p2);
+		}
+
+		// Evaluate longer line
+		// writeable slice of longer array
+		const int longer_cnt = numDP - pair_index;
+		double *longer = &shorter[shorter_cnt];
+		for ( int j = 0; j < longer_cnt; ++j )
+		{
+			demand_point_t const& p2 = demandPoints[j];
+			longer[j] = HaversineDistance(p1, p2);
 		}
 	}
+
+	int *result_counts = nullptr;
+	int *result_disps = nullptr;
+	double *wrapped_result = nullptr;
+
+	if ( 0 == world_rank )
+	{
+		result_counts = new int[world_size];
+		result_disps = new int[world_size];
+		for ( int i = 0; i < world_size; ++i ) {
+			// Offset each process's data by N elements
+			result_disps[i] = i * result_cnt;
+		}
+		wrapped_result = new double[world_size * result_cnt];
+	}
+	
+	MPI_Gatherv(
+		local_result, 
+		result_cnt, 
+		MPI_DOUBLE,
+		wrapped_result,
+		result_counts,
+		result_disps,
+		MPI_DOUBLE, 
+		0, 
+		MPI_COMM_WORLD);
+
+	if ( 0 == world_rank ) {
+        for (int i = 0; i < world_size; ++i) {
+            cout << i << ": ";
+            for (int j = 0; j < result_counts[i]; ++j) {
+                cout << wrapped_result[result_disps[i] + j] << " ";
+            }
+            cout << "\n";
+        }
+    }
+	
+
+	// for (int i = 0; i < numDP; i++)
+	// {
+	// 	distanceMatrix[i] = new double[i + 1];
+	// 	for (int j = 0; j <= i; j++)
+	// 	{
+	// 		distanceMatrix[i][j] = HaversineDistance(
+    //             demandPoints[i].latitude, 
+    //             demandPoints[i].longitude, 
+    //             demandPoints[j].latitude, 
+    //             demandPoints[j].longitude);
+	// 	}
+	// }
 	double t_matrix = getTime();
 	cout << "Matricos skaiciavimo trukme: " << t_matrix - t_start << endl;
 
@@ -144,8 +279,13 @@ void loadDemandPoints()
 
 //=============================================================================
 
-double HaversineDistance(double lat1, double lon1, double lat2, double lon2)
+double HaversineDistance(demand_point_t const& p1, demand_point_t const& p2)
 {
+	const double lat1 = p1.latitude;
+	const double lon1 = p1.longitude;
+	const double lat2 = p2.latitude;
+	const double lon2 = p2.longitude;
+
 	double dlat = fabs(lat1 - lat2);
 	double dlon = fabs(lon1 - lon2);
 	double aa = pow((sin((double)dlat / (double)2 * 0.01745)), 2) + cos(lat1 * 0.01745) *
