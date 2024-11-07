@@ -1,10 +1,13 @@
 #include <iostream>
+#include <iomanip>
 #include <cmath>
 #include <time.h>
 #include <sys/time.h>
 #include <mpi.h>
 #include <cstddef>
 #include <assert.h>
+
+#define DEBUG
 
 using namespace std;
 
@@ -44,8 +47,10 @@ int increaseX(int *X, int index, int maxindex);
 
 int main()
 {
-
 	MPI_Init(NULL, NULL);
+
+	// output config
+	cout << fixed << setprecision(4);
 
 	// Register demand point type
 	MPI_Datatype MPI_DemandPoint;
@@ -64,10 +69,15 @@ int main()
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
+	assert(world_size <= numDP / 2);
+
+	#ifdef DEBUG
 	if(0 == world_rank)
 	{
+		cout << "[numDP, numPF, numCL, numX] = [" << numDP << ", " << numPF << ", " << numCL << ", " << numX << "]\n";
 		loadDemandPoints();
 	}
+	#endif
 
 	MPI_Bcast(demandPoints, numDP, MPI_DemandPoint, 0, MPI_COMM_WORLD);
 
@@ -100,26 +110,30 @@ int main()
 
 	const int stride = ceil(numDP / (2.0f * world_size));
 	const int start = world_rank * stride;
-	const int end = min(stride * ( 1 + world_rank ), numDP / 2);
+	const int end = min(stride * ( 1 + world_rank ), numDP / 2) - 1;
 	const int pairs_cnt = end - start + 1;
 
 	// each process calculates (n + 1) * pairs_cnt values
 	const int result_cnt = pairs_cnt * (numDP + 1);
 	double *local_result = new double[result_cnt];
 
-	if ( 0 == world_rank )
-	{
-		cout << "common params:\n";
-		cout << "stride: " << stride << "\n";
-	} 
+	#ifdef DEBUG
+		if ( 0 == world_rank )
+		{
+			cout << "common params:\n";
+			cout << "world size: " << world_size << '\n';
+			cout << "stride: " << stride << "\n";
+		} 
 
-	cout << "[rank=" << world_rank << "] " 
-		<< "range: [" << start << "-" << end << "]"
-		<< ", pairs: " << pairs_cnt
-		<< '\n';
+		cout << "[rank=" << world_rank << "] " 
+			<< "range: [" << start << "-" << end << "]"
+			<< ", pairs: " << pairs_cnt
+			<< ", result_cnt: " << result_cnt
+			<< '\n';
+	#endif
 
 	// Iterate through pairs
-	for ( int pair_index = start; pair_index < end; ++pair_index )
+	for ( int pair_index = start; pair_index <= end; ++pair_index )
 	{
 		demand_point_t const& p1 = demandPoints[pair_index];
 
@@ -162,6 +176,7 @@ int main()
 		{
 			demand_point_t const& p2 = demandPoints[j];
 			shorter[j] = HaversineDistance(p1, p2);
+			cout << "[" << pair_index << ", " << pair_offset + j << "]" << setw(10) << shorter[j] << '\n';
 		}
 
 		// Evaluate longer line
@@ -171,8 +186,16 @@ int main()
 		for ( int j = 0; j < longer_cnt; ++j )
 		{
 			demand_point_t const& p2 = demandPoints[j];
-			longer[j] = HaversineDistance(p1, p2);
+			longer[j] = HaversineDistance(p1, p2);cout << "[" << pair_index << ", " << pair_offset + shorter_cnt + j << "]" << setw(10) << longer[j] << '\n';
 		}
+
+		#ifdef DEBUG
+			cout << "[pair_index=" << pair_index << "]" 
+			<< " pair_offset: " << pair_offset
+			<< " shorter_cnt: " << shorter_cnt 
+			<< " longer_cnt: " << longer_cnt 
+			<< '\n';
+		#endif
 	}
 
 	int *result_counts = nullptr;
@@ -182,12 +205,30 @@ int main()
 	if ( 0 == world_rank )
 	{
 		result_counts = new int[world_size];
+		for ( int i = 0; i < world_size; ++i ) {
+			// substituted parameters from above into one unreadable mess (I hope its equivalent)
+			result_counts[i] = (min(stride * ( 1 + i ), numDP / 2) -  i * stride) * (numDP + 1);
+		}
+
 		result_disps = new int[world_size];
 		for ( int i = 0; i < world_size; ++i ) {
 			// Offset each process's data by N elements
 			result_disps[i] = i * result_cnt;
 		}
+
 		wrapped_result = new double[world_size * result_cnt];
+		for ( int i = 0; i < world_size * result_cnt; ++i ) {
+			wrapped_result[i] = -1;
+		}
+
+		assert(result_counts != nullptr);
+		assert(result_disps != nullptr);
+		assert(wrapped_result != nullptr);
+	}
+
+	if ( 0 == world_rank )
+	{
+		assert(result_counts != nullptr);
 	}
 	
 	MPI_Gatherv(
@@ -201,15 +242,42 @@ int main()
 		0, 
 		MPI_COMM_WORLD);
 
+	#ifdef DEBUG
 	if ( 0 == world_rank ) {
+		cout << "counts: ";
         for (int i = 0; i < world_size; ++i) {
-            cout << i << ": ";
-            for (int j = 0; j < result_counts[i]; ++j) {
-                cout << wrapped_result[result_disps[i] + j] << " ";
-            }
-            cout << "\n";
+			cout << result_counts[i] << " ";
         }
+		cout << "\ndisplacements: ";
+		for (int i = 0; i < world_size; ++i) {
+			cout << result_disps[i] << " ";
+        }
+		cout << "\nwrapped result:\n";
+		for (int i = 0; i < world_size * result_cnt; ++i) {
+
+			const int world_id = i / result_cnt;
+			const int local_id = i % result_cnt;
+
+			cout << setw(10) << wrapped_result[i] << " ";
+
+			if( world_id == local_id )
+			{
+				cout << "|";
+			}
+			else
+			{
+				cout << " ";
+			}
+
+			//printf("[%d,%d]", world_id, local_id);
+			if( (((i + 1) % result_cnt) == 0) && (i != 0))
+			{
+				cout << '\n';
+			}
+        }
+		cout << "\n";
     }
+	#endif
 	
 
 	// for (int i = 0; i < numDP; i++)
