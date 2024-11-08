@@ -3,6 +3,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include <mpi.h>
+#include <assert.h>
 
 using namespace std;
 
@@ -21,7 +22,7 @@ int numCL = 55;	  // Kandidatu naujiems objektams skaicius (candidate locations)
 int numX = 3;	  // Nauju objektu skaicius
 
 demand_point_t *demandPoints;	 // Geografiniai duomenys
-double **distanceMatrix; // Masyvas atstumu matricai saugoti
+double **distanceMatrix = new double*[numDP]; // Masyvas atstumu matricai saugoti
 
 int *X = new int[numX];		// Naujas sprendinys
 int *bestX = new int[numX]; // Geriausias rastas sprendinys
@@ -79,11 +80,18 @@ int main()
 	}
 
 	// example numDP=6789, world_size=12
-	// lines_count = 566
-	// process 0: 0, 12, 24, ..., 6780
-	// process 1: 1, 13, 25, ..., 6781
+	// lines_count = 618
+	// process 0: receives initialized matrix lines
+	// process 1: 0, 12, 24, ..., 6798 (last index, will be skipped)
 	// ...
 	// process 11: 11, 23, 35, ..., 6791 (last index, will be skipped)
+
+	// initialize distance matrix
+	for ( int i = 0; i < numDP; ++i )
+	{
+		distanceMatrix[ i ] = new double[ i + 1 ] { 0 };
+		assert( distanceMatrix[ i ] != nullptr );
+	}
 
 	if( 0 != world_rank )
 	{
@@ -128,7 +136,7 @@ int main()
 			//printf("[rank=%d] freeing local_result (%d bytes)\n", world_rank, numDP * sizeof(double));
 		}
 
-		printf("[rank=%d] messages sent: %d\n", world_rank, messages_sent);
+		printf("[slave=%d] messages sent: %d\n", world_rank, messages_sent);
 	}
 
 	if ( 0 == world_rank )
@@ -136,13 +144,6 @@ int main()
 		// Only master process needs the entire matrix
 		// when gathering results it will initialize each line
 		//printf("[rank=%d] allocating distanceMatrix (%d bytes)\n", world_rank, numDP * sizeof(double*));
-		distanceMatrix = new double *[numDP];
-
-		// Before waiting and blocking, initialize the matrix
-		for ( int i = 0; i < numDP; ++i )
-		{
-			distanceMatrix[ i ] = new double[ i + 1 ];
-		}
 
 		double *buffer = new double[ numDP ];
 
@@ -157,7 +158,7 @@ int main()
 			const int actual_line_count = max_line_index + 1 > numDP ? lines_count - 1 : lines_count;
 
 			// printf("[rank=%d] max line index to be awaited: %d\n", i, max_line_index);
-			// printf("[rank=%d] line count for this process: %d\n", i, actual_line_count);
+			printf("[slave=%d] line count for this process: %d\n", i, actual_line_count);
 
 			for ( int j = 0; j < actual_line_count; ++j )
 			{	
@@ -169,16 +170,10 @@ int main()
 				const int line_index = status.MPI_TAG;
 				const int buffer_length = line_index + 1;
 				memcpy(distanceMatrix[ line_index ], buffer, buffer_length * sizeof(double));
-			
-				// for ( int k = 0; k < line_index + 1; ++k)
-				// {
-				// 	cout << distanceMatrix[line_index][k] << " ";
-				// }
-				// cout << '\n';
 			}
 		}
 
-		printf("[rank=%d] messages received: %d\n", world_rank, messages_received);
+		printf("[master] messages received: %d\n", messages_received);
 	}
 
 	double t_matrix = getTime();
@@ -188,35 +183,121 @@ int main()
 		cout << "Matricos skaiciavimo trukme: " << t_matrix - t_start << endl;
 	} 
 
-	//----- Pradines naujo ir geriausio sprendiniu reiksmes -------------------
-// 	for (int i = 0; i < numX; i++)
-// 	{ // Pradines naujo ir geriausio sprendiniu koordinates: [0,1,2,...]
-// 		X[i] = i;
-// 		bestX[i] = i;
-// 	}
-// 	u = evaluateSolution(X); // Naujo sprendinio naudingumas (utility)
-// 	bestU = u;				 // Geriausio sprendinio sprendinio naudingumas
+	if( 0 == world_rank )
+	{
+		// send matrix to all other processes
+		for ( int i = 1; i < world_size; ++i )
+		{
+			printf("[master] sending distance matrix to process: %d (total: %d arrays)\n", i, numDP);
+			for( int j = 0; j < numDP; ++j )
+			{
+				double *row = distanceMatrix[j];
+				MPI_Send(row, j + 1, MPI_DOUBLE, i, j, MPI_COMM_WORLD);
+			}
+		}
+	}
+	else
+	{
+		MPI_Status status;
+		for ( int i = 0; i < numDP; ++i )
+		{
+			double *row = distanceMatrix[i];
+			MPI_Recv(row, i + 1, MPI_DOUBLE, 0, i, MPI_COMM_WORLD, &status);
+		}
+		printf("[slave=%d] receiving distance matrix (total: %d arrays)\n", world_rank, numDP);
+		// printf("[slave=%d] distanceMatrix[4]: ", world_rank);
+		// for ( int i = 0; i < 5; ++i )
+		// {
+		// 	cout << distanceMatrix[4][i] << " ";
+		// }
+		// cout << '\n';
+	}
 
-// 	//----- Visų galimų sprendinių perrinkimas --------------------------------
-// 	while (increaseX(X, numX - 1, numCL) == true)
-// 	{
-// 		u = evaluateSolution(X);
-// 		if (u > bestU)
-// 		{
-// 			bestU = u;
-// 			for (int i = 0; i < numX; i++)
-// 				bestX[i] = X[i];
-// 		}
-// 	}
+	// //----- Pradines naujo ir geriausio sprendiniu reiksmes -------------------
 
-// 	//----- Rezultatu spausdinimas --------------------------------------------
-// 	double t_finish = getTime(); // Skaiciavimu pabaigos laikas
-// 	cout << "Sprendinio paieskos trukme: " << t_finish - t_matrix << endl;
-// 	cout << "Algoritmo vykdymo trukme: " << t_finish - t_start << endl;
-// 	cout << "Geriausias sprendinys: ";
-// 	for (int i = 0; i < numX; i++)
-// 		cout << bestX[i] << " ";
-// 	cout << "(" << bestU << " procentai rinkos)" << endl;
+	if( 0 == world_rank )
+	{
+		for (int i = 0; i < numX; i++)
+		{ // Pradines naujo ir geriausio sprendiniu koordinates: [0,1,2,...]
+			X[i] = i;
+			bestX[i] = i;
+		}
+		u = evaluateSolution(X); // Naujo sprendinio naudingumas (utility)
+		bestU = u;				 // Geriausio sprendinio sprendinio naudingumas
+
+		//----- Visų galimų sprendinių perrinkimas --------------------------------
+		MPI_Status status;
+		int messages_sent = 0;
+		// Receive request for/send tasks
+		while ( increaseX(X, numX - 1, numCL) == true )
+		{
+			int tmp;
+			MPI_Recv(&tmp, 1, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
+			//printf("[master] received task request from slave: %d.\n", status.MPI_SOURCE);
+
+			MPI_Send(X, numX, MPI_INT, status.MPI_SOURCE, 0, MPI_COMM_WORLD);
+			//printf("[master] send task to slave: %d.\n", status.MPI_SOURCE);
+
+			++messages_sent;
+		}
+
+		// Collect results
+		for ( int messages_received = 0; messages_received < messages_sent; ++messages_received )
+		{
+			MPI_Recv(&u, 1, MPI_DOUBLE, MPI_ANY_SOURCE, 1, MPI_COMM_WORLD, &status);
+
+			if ( u > bestU )
+			{
+				bestU = u;
+				memcpy(bestX, X, numX * sizeof(double));
+			}
+		}
+
+		//printf("[master] messages sent: %d\n", messages_sent);
+
+		// When all tasks are completed send termination signals to unblock slave processes
+		for (int i = 1; i < world_size; ++i) {
+			MPI_Send(&X, numX, MPI_INT, i, 2, MPI_COMM_WORLD);
+		}
+	}
+	else
+	{
+		while(true)
+		{
+			// Request task
+			//printf("[slave=%d] requesting task.", world_rank);
+			MPI_Send(&world_rank, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
+
+			MPI_Status status;
+			MPI_Recv(X, numX, MPI_INT, 0, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+
+			// Check if termination task
+			if( 2 == status.MPI_TAG )
+			{
+				//printf("[slave=%d] closing receiver.\n", world_rank);
+				break;
+			}
+
+			u = evaluateSolution(X);
+
+			//printf("[slave=%d] sending result.", world_rank);
+			MPI_Send(&u, 1, MPI_DOUBLE, 0, 1, MPI_COMM_WORLD);
+		}
+	}
+
+
+	//----- Rezultatu spausdinimas --------------------------------------------
+	double t_finish = getTime(); // Skaiciavimu pabaigos laikas
+
+	if ( 0 == world_rank )
+	{
+		cout << "Sprendinio paieskos trukme: " << t_finish - t_matrix << endl;
+		cout << "Algoritmo vykdymo trukme: " << t_finish - t_start << endl;
+		cout << "Geriausias sprendinys: ";
+		for (int i = 0; i < numX; i++)
+			cout << bestX[i] << " ";
+		cout << "(" << bestU << " procentai rinkos)" << endl;
+	}
 	MPI_Finalize();
 }
 
