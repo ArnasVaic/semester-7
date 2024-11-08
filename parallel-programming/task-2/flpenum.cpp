@@ -190,7 +190,8 @@ int main()
 		}
 
 		#ifdef DEBUG
-			cout << "[pair_index=" << pair_index << "]" 
+			cout << "[rank=" << world_rank << ", " 
+			<< "pair_index=" << pair_index << "]" 
 			<< " pair_offset: " << pair_offset
 			<< " shorter_cnt: " << shorter_cnt 
 			<< " longer_cnt: " << longer_cnt 
@@ -218,7 +219,7 @@ int main()
 
 		wrapped_result = new double[world_size * result_cnt];
 		for ( int i = 0; i < world_size * result_cnt; ++i ) {
-			wrapped_result[i] = -1;
+			wrapped_result[i] = -1.0f;
 		}
 
 		assert(result_counts != nullptr);
